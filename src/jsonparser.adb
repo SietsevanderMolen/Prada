@@ -41,29 +41,24 @@ package body jsonparser is
       --  Save number of results for checking
       numresults := Get (Val => json, Field => "resultcount");
 
-      if returntype = "search" or
-         returntype = "msearch" or
-         returntype = "multiinfo"
-      then
-         --  Parse array of results
-         declare
-            A_JSON_Array : constant JSON_Array := Get (Val => json,
-                                                       Field => "results");
-            A_JSON_Value : JSON_Value;
-            Array_Length : constant Natural := Length (A_JSON_Array);
-         begin
-            if Array_Length = numresults then
-               for J in 1 .. Array_Length loop
-                  A_JSON_Value := Get (Arr   => A_JSON_Array,
-                                       Index => J);
-                  ParseSingleResultJSON (A_JSON_Value);
-               end loop;
-            else
-               raise MalformedJSONFail with
-                  "Resultcount doesn't conform to rpc promises";
-            end if;
-         end;
-      end if;
+      --  Parse array of results
+      declare
+         A_JSON_Array : constant JSON_Array := Get (Val => json,
+                                                    Field => "results");
+         A_JSON_Value : JSON_Value;
+         Array_Length : constant Natural := Length (A_JSON_Array);
+      begin
+         if Array_Length = numresults then
+            for J in 1 .. Array_Length loop
+               A_JSON_Value := Get (Arr   => A_JSON_Array,
+                                    Index => J);
+               ParseSingleResultJSON (A_JSON_Value);
+            end loop;
+         else
+            raise MalformedJSONFail with
+               "Resultcount doesn't conform to rpc promises";
+         end if;
+      end;
    end ParseJSON;
 
    -------------------------------------
