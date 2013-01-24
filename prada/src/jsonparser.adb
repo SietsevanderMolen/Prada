@@ -8,9 +8,6 @@ package body jsonparser is
    procedure ErrorHandler
       (msg : in String)
    is
-      TooManyResultsFail : exception;
-      QueryTooSmallFail  : exception;
-      IncorrectReqFail   : exception;
    begin
       if msg = "Too many package results." then
          raise TooManyResultsFail with "Too many results for query";
