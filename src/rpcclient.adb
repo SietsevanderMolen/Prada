@@ -49,7 +49,7 @@ package body rpcclient is
       str := Un_Escape_String (To_String (str));
       return str;
 
-      --  Handle the exceptions, basically just propagate them
+      --  Handle the exceptions, log and propagate them
       exception
          --   when Fail : Con_Fail | Mime_Fail =>
             --   Trace (Stream1, Exception_Message (Fail));

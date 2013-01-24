@@ -19,10 +19,7 @@ begin
    --  Iterate the Test_JSON object.
    --  The Handler procedure is responsible for
    --  outputting the contents.
-   Ada.Text_IO.Put_Line ("--> Test_JSON Start <--");
-   Map_JSON_Object (Val   => resultlist,
-                    CB    => JSONHandler'Access);
-   Ada.Text_IO.Put_Line ("--> Test_JSON End <--");
+   ParseJSON (json => resultlist);
 
    --  Log
    Trace (Stream1, Integer'Image (Length (str)), "Rec str of len");

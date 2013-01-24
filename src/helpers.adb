@@ -1,5 +1,6 @@
 with Ada.Text_IO;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Exceptions; use Ada.Exceptions;
 with Ada.Strings.Equal_Case_Insensitive;
 with Ada.Unchecked_Conversion;
 with GNAT.Encode_UTF8_String;
@@ -9,56 +10,52 @@ package body helpers is
    ---------------------
    --  JSON Iterator  --
    ---------------------
-   procedure JSONHandler
-      (Name  : in UTF8_String;
-       Value : in JSON_Value)
+   procedure ParseJSON
+      (json : in JSON_Value)
    is
       use Ada.Text_IO;
+      numresults : Positive;
    begin
-      if Ada.Strings.Equal_Case_Insensitive (Name, "type") then
-         Put_Line (Get (Value));
-      elsif Ada.Strings.Equal_Case_Insensitive (Name, "resultcount") then
-         Put_Line (Integer'Image (Get (Value)));
-      elsif Ada.Strings.Equal_Case_Insensitive (Name, "results") then
-         declare
-            A_JSON_Array : constant JSON_Array := Get (Val => Value);
-            A_JSON_Value : JSON_Value;
-            Array_Length : constant Natural := Length (A_JSON_Array);
-         begin
-            Put (Name & "(array):[");
-            for J in 1 .. Array_Length loop
-               A_JSON_Value := Get (Arr   => A_JSON_Array,
-                                    Index => J);
-               SingleJSONResultHandler (A_JSON_Value);
-            end loop;
-            Put ("]");
-            New_Line;
-         end;
-      end if;
-   end JSONHandler;
+      --  Save number of results for checking
+      numresults := Get (Val => json, Field => "resultcount");
+
+      --  Parse array of results
+      declare
+         A_JSON_Array : constant JSON_Array :=
+                     Get (Val => json, Field => "results");
+         A_JSON_Value : JSON_Value;
+         Array_Length : constant Natural := Length (A_JSON_Array);
+      begin
+         for J in 1 .. Array_Length loop
+            A_JSON_Value := Get (Arr   => A_JSON_Array,
+                                 Index => J);
+            ParseSingleResultJSON (A_JSON_Value);
+         end loop;
+      end;
+   end ParseJSON;
 
    -------------------------------------
    --  Parses a single search result  --
    -------------------------------------
-   procedure SingleJSONResultHandler
-      (Value : in JSON_Value)
+   procedure ParseSingleResultJSON
+      (json : in JSON_Value)
    is
       use Ada.Text_IO;
       res         : Result;
    begin
       res := Results.Create (
-         Get (Val => Value, Field => "Description"),
-         Get (Val => Value, Field => "ID"),
-         Get (Val => Value, Field => "License"),
-         Get (Val => Value, Field => "Name"),
-         Get (Val => Value, Field => "NumVotes"),
-         Get (Val => Value, Field => "OutOfDate"),
-         Get (Val => Value, Field => "URL"),
-         Get (Val => Value, Field => "URLPath"),
-         Get (Val => Value, Field => "Version")
+         Get (Val => json, Field => "Description"),
+         Get (Val => json, Field => "ID"),
+         Get (Val => json, Field => "License"),
+         Get (Val => json, Field => "Name"),
+         Get (Val => json, Field => "NumVotes"),
+         Get (Val => json, Field => "OutOfDate"),
+         Get (Val => json, Field => "URL"),
+         Get (Val => json, Field => "URLPath"),
+         Get (Val => json, Field => "Version")
       );
       PrettyPrint (res);
-   end SingleJSONResultHandler;
+   end ParseSingleResultJSON;
 
    ----------------------------------
    --  Fixes escaping of a string  --
