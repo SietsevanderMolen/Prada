@@ -1,7 +1,6 @@
-with Ada.Text_IO;
+with GNATCOLL.Traces; use GNATCOLL.Traces;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Exceptions; use Ada.Exceptions;
-with Ada.Strings.Equal_Case_Insensitive;
 with Ada.Unchecked_Conversion;
 with GNAT.Encode_UTF8_String;
 with Results; use Results;
@@ -13,25 +12,50 @@ package body helpers is
    procedure ParseJSON
       (json : in JSON_Value)
    is
-      use Ada.Text_IO;
-      numresults : Positive;
+      Stream1         : constant Trace_Handle := Create ("aurhelper");
+      returntype      : Unbounded_String;
+      numresults      : Natural;
+      errormsg        : Unbounded_String;
+      RPC_fail        : exception;
    begin
-      --  Save number of results for checking
-      numresults := Get (Val => json, Field => "resultcount");
+      returntype := Get (Val => json, Field => "type");
 
-      --  Parse array of results
-      declare
-         A_JSON_Array : constant JSON_Array :=
-                     Get (Val => json, Field => "results");
-         A_JSON_Value : JSON_Value;
-         Array_Length : constant Natural := Length (A_JSON_Array);
-      begin
-         for J in 1 .. Array_Length loop
-            A_JSON_Value := Get (Arr   => A_JSON_Array,
-                                 Index => J);
-            ParseSingleResultJSON (A_JSON_Value);
-         end loop;
-      end;
+      --  The rpc returned a search result
+      if returntype = "search" then
+         --  Save number of results for checking
+         numresults := Get (Val => json, Field => "resultcount");
+
+         if numresults > 1 then
+            --  Parse array of results
+            declare
+               A_JSON_Array : constant JSON_Array :=
+                           Get (Val => json, Field => "results");
+               A_JSON_Value : JSON_Value;
+               Array_Length : constant Natural := Length (A_JSON_Array);
+            begin
+               for J in 1 .. Array_Length loop
+                  A_JSON_Value := Get (Arr   => A_JSON_Array,
+                                       Index => J);
+                  ParseSingleResultJSON (A_JSON_Value);
+               end loop;
+            end;
+         else
+            null; --  No results! Handle me!
+         end if;
+      --  The rpc returned an error
+      elsif returntype = "error" then
+         errormsg := Get (Val => json, Field => "results");
+         raise RPC_Fail with To_String (errormsg);
+      end if;
+
+      --  Handle the exceptions, log and propagate them
+      exception
+         --   when Fail : Con_Fail | Mime_Fail =>
+            --   Trace (Stream1, Exception_Message (Fail));
+            --   raise;
+         when Fail : others =>
+            Trace (Stream1, Exception_Message (Fail));
+            raise;
    end ParseJSON;
 
    -------------------------------------
@@ -40,7 +64,6 @@ package body helpers is
    procedure ParseSingleResultJSON
       (json : in JSON_Value)
    is
-      use Ada.Text_IO;
       res         : Result;
    begin
       res := Results.Create (

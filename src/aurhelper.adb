@@ -10,7 +10,7 @@ procedure aurhelper is
    str        : Unbounded_String;
    resultlist : JSON_Value;
 begin
-   str := rpcclient.Get_JSON ("ncmpcpp");
+   str := rpcclient.Get_JSON ("a");
 
    --  Try to convert to a json object
    resultlist := Read (Strm     => To_String (str),
