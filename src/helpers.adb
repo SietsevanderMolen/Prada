@@ -16,7 +16,7 @@ package body helpers is
       First := Text'First;
       Last  := Text'Last;
 
-      --  Trim blancks and the double quotes
+      --  Trim blanks and the double quotes
 
       while First <= Text'Last and then Text (First) = ' ' loop
          First := First + 1;
