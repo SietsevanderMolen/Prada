@@ -1,11 +1,9 @@
 with AWS.Client, AWS.Response, AWS.Messages;
 use  AWS, AWS.Messages;
 with Ada; use Ada;
-with GNATCOLL.Traces; use GNATCOLL.Traces;
 with helpers; use helpers;
 
 package body rpcclient is
-
    function Get_JSON (query : in String) return Unbounded_String
    is
       Page      : AWS.Response.Data;
@@ -16,7 +14,6 @@ package body rpcclient is
       str       : Unbounded_String;
 
    begin
-      Parse_Config_File;   --  parses default ./.gnatdebug
       --  Create the search url where we can reach the rpc
       url  := "https://aur.archlinux.org/rpc.php?type=search&arg="
                & To_Unbounded_String (query);

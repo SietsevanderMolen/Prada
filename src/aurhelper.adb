@@ -10,6 +10,8 @@ procedure aurhelper is
    str        : Unbounded_String;
    resultlist : JSON_Value;
 begin
+   Parse_Config_File;   --  parses default ./.gnatdebug
+
    str := rpcclient.Get_JSON ("dell");
 
    --  Try to convert to a json object
