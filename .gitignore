@@ -1,0 +1,18 @@
+# Do not track build objects.
+build*/*
+build*/*
+!build*/.gitignore
+
+# Do not track executables
+exe/*
+!exe/.gitignore
+!exe/test.json
+
+# Do not track emacs temporary and backup files
+\#*#
+*~
+
+#
+*~
+*.ali
+*.o
