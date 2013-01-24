@@ -1,23 +1,20 @@
 with AWS.Client, AWS.Response, AWS.Messages;
 with Ada.Exceptions; use Ada.Exceptions;
 use  Ada, AWS, AWS.Messages;
-with Ada.Text_IO;
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with GNATCOLL.Traces; use GNATCOLL.Traces;
 with helpers; use helpers;
 
 package body rpcclient is
 
-   function Get_JSON (query : in String) return JSON_Value
+   function Get_JSON (query : in String) return Unbounded_String
    is
-      Stream1          : constant Trace_Handle := Create ("rpcclient");
-      Page             : AWS.Response.Data;
-      S                : Messages.Status_Code;
-      Con_Fail         : exception;
-      Mime_Fail        : exception;
-      url              : Unbounded_String;
-      str              : Unbounded_String;
-      resultlist       : JSON_Value;
+      Stream1   : constant Trace_Handle := Create ("rpcclient");
+      Page      : AWS.Response.Data;
+      S         : Messages.Status_Code;
+      Con_Fail  : exception;
+      Mime_Fail : exception;
+      url       : Unbounded_String;
+      str       : Unbounded_String;
 
    begin
       Parse_Config_File;   --  parses default ./.gnatdebug
@@ -27,7 +24,9 @@ package body rpcclient is
       Page := Client.Get (To_String (url));
       S    := AWS.Response.Status_Code (Page);
 
-      --  First check for errors
+      Trace (Stream1, To_String (url), "Called url ");
+
+      --  First check for connection/general errors
       if S not in Success then
          raise Con_Fail with
             "Unable to retrieve data => Status Code: "
@@ -48,25 +47,7 @@ package body rpcclient is
       --  I guess that this is essentially a bug upstream.
       --  Contact adacore?
       str := Un_Escape_String (To_String (str));
-
-      --  Convert to a json object
-      resultlist := Read (Strm     => To_String (str),
-                          Filename => "");
-
-      --  Iterate the Test_JSON object.
-      --  The Handler procedure is responsible for
-      --  outputting the contents.
-      Ada.Text_IO.Put_Line ("--> Test_JSON Start <--");
-      Map_JSON_Object (Val   => resultlist,
-                       CB    => JSONHandler'Access);
-      Ada.Text_IO.Put_Line ("--> Test_JSON End <--");
-
-      --  Log
-      Trace (Stream1, To_String (url), "Called url ");
-      Trace (Stream1, Integer'Image (Length (str)), "Rec str of len");
-
-      --  Let's not forget to return our json object
-      return resultlist;
+      return str;
 
       --  Handle the exceptions, basically just propagate them
       exception
