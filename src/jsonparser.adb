@@ -27,15 +27,11 @@ package body jsonparser is
    procedure ParseJSON
       (json : in JSON_Value)
    is
-      returntype          : Unbounded_String;
       numresults          : Natural;
       MalformedJSONFail   : exception;
    begin
       --  Check this json for trouble
       PreParseChecks (json);
-
-      --  Get return type
-      returntype := Get (Val => json, Field => "type");
 
       --  The rpc returned an array of search results
       --  Save number of results for checking

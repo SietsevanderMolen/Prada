@@ -8,7 +8,6 @@ package body rpcclient is
 
    function Get_JSON (query : in String) return Unbounded_String
    is
-      Stream1   : constant Trace_Handle := Create ("rpcclient");
       Page      : AWS.Response.Data;
       S         : Messages.Status_Code;
       Con_Fail  : exception;
@@ -23,8 +22,6 @@ package body rpcclient is
                & To_Unbounded_String (query);
       Page := Client.Get (To_String (url));
       S    := AWS.Response.Status_Code (Page);
-
-      Trace (Stream1, To_String (url), "Called url ");
 
       --  First check for connection/general errors
       if S not in Success then

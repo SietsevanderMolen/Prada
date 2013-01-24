@@ -19,9 +19,6 @@ begin
    --  Parse the json object
    ParseJSON (json => resultlist);
 
-   --  Log
-   Trace (Stream1, Integer'Image (Length (str)), "Rec str of len");
-
    exception
       when Fail : others =>
          Trace (Stream1, Exception_Message (Fail));
