@@ -1,6 +1,6 @@
 with AWS.Client, AWS.Response, AWS.Messages;
-with Ada.Exceptions; use Ada.Exceptions;
-use  Ada, AWS, AWS.Messages;
+use  AWS, AWS.Messages;
+with Ada; use Ada;
 with GNATCOLL.Traces; use GNATCOLL.Traces;
 with helpers; use helpers;
 
@@ -48,14 +48,5 @@ package body rpcclient is
       --  Contact adacore?
       str := Un_Escape_String (To_String (str));
       return str;
-
-      --  Handle the exceptions, log and propagate them
-      exception
-         --   when Fail : Con_Fail | Mime_Fail =>
-            --   Trace (Stream1, Exception_Message (Fail));
-            --   raise;
-         when Fail : others =>
-            Trace (Stream1, Exception_Message (Fail));
-            raise;
    end Get_JSON;
 end rpcclient;
