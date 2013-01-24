@@ -9,8 +9,8 @@ package body JSON_Parser_Test_Suite is
       Ret : constant Access_Test_Suite := new Test_Suite;
    begin
       Ret.Add_Test
-         (Caller.Create ("Sample Test : Test Test",
-         JSON_Parser_Test.Test_Test'Access));
+         (Caller.Create ("Borked input handled",
+         JSON_Parser_Test.Test_NoJSONError'Access));
       return Ret;
    end Suite;
 

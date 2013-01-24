@@ -7,4 +7,5 @@ procedure Test_Prada is
    Reporter : AUnit.Reporter.Text.Text_Reporter;
 begin
    Runner (Reporter);
+   AUnit.Reporter.Text.Set_Use_ANSI_Colors (Reporter, True);
 end Test_Prada;
