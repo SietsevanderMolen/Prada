@@ -5,8 +5,8 @@ with jsonparser; use jsonparser;
 with Ada.Exceptions; use Ada.Exceptions;
 with rpcclient;
 
-procedure aurhelper is
-   Stream1    : constant Trace_Handle := Create ("aurhelper");
+procedure prada is
+   Stream1    : constant Trace_Handle := Create ("prada");
    str        : Unbounded_String;
    resultlist : JSON_Value;
 begin
@@ -25,4 +25,4 @@ begin
       when Fail : others =>
          Trace (Stream1, Exception_Message (Fail));
          raise;
-end aurhelper;
+end prada;
