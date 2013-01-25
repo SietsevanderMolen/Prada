@@ -1,7 +1,5 @@
 # Do not track build objects.
-build*/*
-build*/*
-!build*/.gitignore
+*/obj*/*
 
 # Do not track executables
 exe/*
