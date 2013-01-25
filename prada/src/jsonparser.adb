@@ -81,7 +81,6 @@ package body jsonparser is
    is
       returntype            : Unbounded_String;
       numresults            : Natural;
-      NI_Fail               : exception;
       UnknownReturnTypeFail : exception;
    begin
       --  Get the return type
