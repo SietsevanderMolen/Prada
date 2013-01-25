@@ -13,16 +13,20 @@ package body JSON_Parser_Test_Suite is
          JSON_Parser_Test.Test_NoJSONError'Access));
 
       Ret.Add_Test
-         (Caller.Create ("Query too small error",
+         (Caller.Create ("Unexpected request type error",
+         JSON_Parser_Test.Test_UnexpectedRequestType'Access));
+
+      Ret.Add_Test
+         (Caller.Create ("Test aur returncode: Query too small error",
          JSON_Parser_Test.Test_QueryTooSmallError'Access));
 
       Ret.Add_Test
-         (Caller.Create ("Too many results error",
+         (Caller.Create ("Test aur returncode: Too many results error",
          JSON_Parser_Test.Test_TooManyResultsError'Access));
 
       Ret.Add_Test
-         (Caller.Create ("Unexpected request type error",
-         JSON_Parser_Test.Test_UnexpectedRequestType'Access));
+         (Caller.Create ("Test aur returncode: Unexpected return type error",
+         JSON_Parser_Test.Test_UnexpectedReturnType'Access));
       return Ret;
    end Suite;
 

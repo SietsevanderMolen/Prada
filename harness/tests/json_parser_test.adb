@@ -67,4 +67,21 @@ package body JSON_Parser_Test is
       when jsonparser.IncorrectReqFail =>
          null;
    end Test_UnexpectedRequestType;
+
+   procedure Test_UnexpectedReturnType (T : in out Test) is
+      use GNATCOLL.JSON;
+      pragma Unreferenced (T);
+      jsonstring : constant String :=
+         "{""type"":""thisiswrong"",""resultcount"":0,""" &
+         "results"":""this is not parsed.""}";
+      json : JSON_Value;
+   begin
+      json := Read (Strm     => jsonstring,
+                    Filename => "");
+      jsonparser.ParseJSON (json => json);
+      Assert (False, "No unexpected return type exception raised");
+   exception
+      when jsonparser.UnknownReturnTypeFail =>
+         null;
+   end Test_UnexpectedReturnType;
 end JSON_Parser_Test;

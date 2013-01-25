@@ -15,4 +15,7 @@ package JSON_Parser_Test is
 
    procedure Test_UnexpectedRequestType (T : in out Test);
    --  Test how well the program handles wrong request type errors
+   --
+   procedure Test_UnexpectedReturnType (T : in out Test);
+   --  Test how well the program handles wrong return type errors
 end JSON_Parser_Test;
