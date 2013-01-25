@@ -33,4 +33,38 @@ package body JSON_Parser_Test is
       when jsonparser.QueryTooSmallFail =>
          null;
    end Test_QueryTooSmallError;
+
+   procedure Test_TooManyResultsError (T : in out Test) is
+      use GNATCOLL.JSON;
+      pragma Unreferenced (T);
+      jsonstring : constant String :=
+         "{""type"":""error"",""resultcount"":0,""" &
+         "results"":""Too many package results.""}";
+      json : JSON_Value;
+   begin
+      json := Read (Strm     => jsonstring,
+                    Filename => "");
+      jsonparser.ParseJSON (json => json);
+      Assert (False, "No argument too small exception raised");
+   exception
+      when jsonparser.TooManyResultsFail =>
+         null;
+   end Test_TooManyResultsError;
+
+   procedure Test_UnexpectedRequestType (T : in out Test) is
+      use GNATCOLL.JSON;
+      pragma Unreferenced (T);
+      jsonstring : constant String :=
+         "{""type"":""error"",""resultcount"":0,""" &
+         "results"":""Incorrect request type specified.""}";
+      json : JSON_Value;
+   begin
+      json := Read (Strm     => jsonstring,
+                    Filename => "");
+      jsonparser.ParseJSON (json => json);
+      Assert (False, "No unexpected request type exception raised");
+   exception
+      when jsonparser.IncorrectReqFail =>
+         null;
+   end Test_UnexpectedRequestType;
 end JSON_Parser_Test;

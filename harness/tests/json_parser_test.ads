@@ -10,4 +10,9 @@ package JSON_Parser_Test is
    procedure Test_QueryTooSmallError (T : in out Test);
    --  Test how well the program handles small query errors
 
+   procedure Test_TooManyResultsError (T : in out Test);
+   --  Test how well the program handles too many results errors
+
+   procedure Test_UnexpectedRequestType (T : in out Test);
+   --  Test how well the program handles wrong request type errors
 end JSON_Parser_Test;
