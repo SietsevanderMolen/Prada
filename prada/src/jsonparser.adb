@@ -99,10 +99,6 @@ package body jsonparser is
       elsif returntype = "error" then
          --  Handle the error
          ErrorHandler (Get (Val => json, Field => "results"));
-      elsif returntype = "info" then
-         --  This shouldn't be seen
-         raise NI_Fail with
-            "rpc returned info, but this is not implemented";
       else
          --  Any other return types must be wrong
          raise UnknownReturnTypeFail with "Unknown return type";
