@@ -7,7 +7,7 @@ test:
 
 coverage:
 	gprbuild -p -f -Pharness/harness -XCOVERAGE=yes
-	./test_prada
+	exe/test_prada
 	cd harness/obj; gcov ../../prada/obj/*.gcda
 
 clean:
