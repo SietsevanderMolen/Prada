@@ -1,7 +1,7 @@
-with GNATCOLL.JSON; use GNATCOLL.JSON;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with GNATCOLL.Traces; use GNATCOLL.Traces;
-with jsonparser; use jsonparser;
+with JSONParser; use JSONParser;
+with aurparser; use aurparser;
 with Ada.Exceptions; use Ada.Exceptions;
 with rpcclient;
 
@@ -12,14 +12,14 @@ procedure prada is
 begin
    Parse_Config_File;   --  parses default ./.gnatdebug
 
-   str := rpcclient.Get_JSON ("dell");
+   str := rpcclient.Get_JSON ("ada");
 
    --  Try to convert to a json object
-   resultlist := Read (Strm     => To_String (str),
+   resultlist := ParseJSON (Strm     => To_String (str),
    Filename => "");
 
    --  Parse the json object
-   ParseJSON (json => resultlist);
+   ParseAURResponse (json => resultlist);
 
    exception
       when Fail : others =>
