@@ -3,19 +3,6 @@ with JSONParser; use JSONParser;
 with AURParser; use AURParser;
 
 package body JSON_Parser_Test is
-   procedure Test_NoJSONError (T : in out Test) is
-      jsonstring : constant String := "borked";
-      json : JSON_Value;
-      pragma Unreferenced (T);
-   begin
-      json := ParseJSON (Strm     => jsonstring);
-      ParseAURResponse (json);
-      Assert (False, "No Invalid_JSON_Stream exception raised");
-   exception
-      when JSONParser.InvalidJSONException =>
-         null;
-   end Test_NoJSONError;
-
    procedure Test_QueryTooSmallError (T : in out Test) is
       jsonstring : constant String :=
 "{""type"":""error"",""resultcount"":0,""results"":""Query arg too small""}";

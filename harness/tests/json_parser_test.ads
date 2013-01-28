@@ -4,9 +4,6 @@ package JSON_Parser_Test is
 
    type Test is new AUnit.Test_Fixtures.Test_Fixture with null record;
 
-   procedure Test_NoJSONError (T : in out Test);
-   --  Test how well the program handles borked json
-   --
    procedure Test_QueryTooSmallError (T : in out Test);
    --  Test how well the program handles small query errors
 
@@ -17,5 +14,5 @@ package JSON_Parser_Test is
    --  Test how well the program handles wrong request type errors
    --
    procedure Test_UnexpectedReturnType (T : in out Test);
-   --  Test how well the program handles wrong return type errors
+   --  Test how well the program handles wrong type errors
 end JSON_Parser_Test;
