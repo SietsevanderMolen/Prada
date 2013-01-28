@@ -34,12 +34,6 @@ package body rpcclient is
 
       --  Get actual json message
       str := AWS.Response.Message_Body (Page);
-
-      --  Fix the escaping of the string
-      --  because within a json string \" is escaped
-      --  I guess that this is essentially a bug upstream.
-      --  Contact adacore?
-      --  str := Un_Escape_String (To_String (str));
       return str;
    end Get_JSON;
 end rpcclient;
