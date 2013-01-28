@@ -1,7 +1,7 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with GNATCOLL.Traces; use GNATCOLL.Traces;
 with JSONParser; use JSONParser;
-with aurparser; use aurparser;
+with AURParser; use AURParser;
 with Ada.Exceptions; use Ada.Exceptions;
 with rpcclient;
 
