@@ -1,7 +1,6 @@
 with AWS.Client, AWS.Response, AWS.Messages;
 use  AWS, AWS.Messages;
 with Ada; use Ada;
-with helpers; use helpers;
 
 package body rpcclient is
    function Get_JSON (query : in String) return Unbounded_String
@@ -40,7 +39,7 @@ package body rpcclient is
       --  because within a json string \" is escaped
       --  I guess that this is essentially a bug upstream.
       --  Contact adacore?
-      str := Un_Escape_String (To_String (str));
+      --  str := Un_Escape_String (To_String (str));
       return str;
    end Get_JSON;
 end rpcclient;
