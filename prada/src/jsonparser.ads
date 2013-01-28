@@ -5,7 +5,7 @@ with Ada.Containers.Vectors;
 with Ada.Containers.Indefinite_Hashed_Maps;
 
 package JSONParser is
-   InvalidJSONException : exception;
+   InvalidJSONException  : exception;
 
    type JSON_Value_Type is
       (JSON_Null_Type,
@@ -30,7 +30,7 @@ package JSONParser is
    --  Utility functions used to translate a JSON value into an ordinary object
    function Kind (Val : JSON_Value) return JSON_Value_Type;
 
-   function ParseJSON (Strm, Filename : String) return JSON_Value;
+   function ParseJSON (Strm : String) return JSON_Value;
 
    function Create return JSON_Value;
 

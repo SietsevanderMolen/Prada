@@ -155,8 +155,7 @@ package body JSONParser is
       (Strm     :        String;
       Idx      : access Natural;
       Col      : access Natural;
-      Line     : access Natural;
-      Filename : String) return JSON_Value;
+      Line     : access Natural) return JSON_Value;
 
    ---------------
    -- ParseJSON --
@@ -165,8 +164,7 @@ package body JSONParser is
       (Strm     :        String;
       Idx      : access Natural;
       Col      : access Natural;
-      Line     : access Natural;
-      Filename : String) return JSON_Value
+      Line     : access Natural) return JSON_Value
    is
       function Un_Escape_String (Text : String) return Unbounded_String;
 
@@ -411,7 +409,7 @@ package body JSONParser is
                   end if;
 
                   First := False;
-                  Append (Arr.all, ParseJSON (Strm, Idx, Col, Line, Filename));
+                  Append (Arr.all, ParseJSON (Strm, Idx, Col, Line));
                end loop;
 
                if Idx.all > Strm'Last or else Strm (Idx.all) /= ']' then
@@ -487,7 +485,7 @@ package body JSONParser is
 
                      declare
                         Item : constant JSON_Value :=
-                           ParseJSON (Strm, Idx, Col, Line, Filename);
+                           ParseJSON (Strm, Idx, Col, Line);
                      begin
                         Ret.Obj_Value.Vals.Include
                            (Key      => To_String (Name),
@@ -517,11 +515,11 @@ package body JSONParser is
    ---------------
    -- ParseJSON --
    ---------------
-   function ParseJSON (Strm, Filename : String) return JSON_Value is
+   function ParseJSON (Strm : String) return JSON_Value is
       Idx  : aliased Natural := Strm'First;
       Col  : aliased Natural := 1;
       Line : aliased Natural := 1;
    begin
-      return ParseJSON (Strm, Idx'Access, Col'Access, Line'Access, Filename);
+      return ParseJSON (Strm, Idx'Access, Col'Access, Line'Access);
    end ParseJSON;
 end JSONParser;
