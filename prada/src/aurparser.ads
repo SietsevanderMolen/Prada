@@ -1,6 +1,6 @@
 with JSONParser; use JSONParser;
 
-package aurparser is
+package AURParser is
 
    TooManyResultsFail    : exception;
    IncorrectReqFail      : exception;
@@ -15,4 +15,4 @@ package aurparser is
 
    procedure ErrorHandler
       (msg  : in String);
-end aurparser;
+end AURParser;

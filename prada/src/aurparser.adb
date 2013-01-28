@@ -1,7 +1,7 @@
 with Results; use Results;
 with Ada.Strings.Unbounded;   use Ada.Strings.Unbounded;
 
-package body aurparser is
+package body AURParser is
    ---------------------------------------------
    --  Handles the errors the rpc can return  --
    ---------------------------------------------
@@ -78,4 +78,4 @@ package body aurparser is
       );
       PrettyPrint (res);
    end ParseSingleAURResult;
-end aurparser;
+end AURParser;
