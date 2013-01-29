@@ -1,33 +1,104 @@
-with GNAT.Command_Line;  use GNAT.Command_Line;
---  with AurReplies; use AurReplies;
---  with AurInterface;
+with GNAT.Command_Line;
+with GNAT.OS_Lib;
+with AurReplies; use AurReplies;
+with AurInterface;
+with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 
 procedure prada is
-   --  results : AurReply;
-   procedure Display_Help;
+   type Run_Mode is (Nop, Search, SearchQuick, Install, Info);
+   type Variant_Record (Option : Run_Mode) is
+   record
+      --  common components
+      case Option is
+         when Nop =>
+            --  components for nop
+            null;
+         when Search =>
+            --  components for search
+            null;
+         when SearchQuick =>
+            --  components quick search
+            null;
+         when Install =>
+            --  components for install
+            null;
+         when Info =>
+            --  components for info
+            null;
+      end case;
+   end record;
 
-   procedure Display_Help is
+   results : AurReply;
+   mode    : Run_Mode;
+   query   : Ada.Strings.Unbounded.Unbounded_String;
+
+   procedure DisplayHelp;
+   procedure ParseCommandLine;
+
+   procedure DisplayHelp is
    begin
-      Ada.Text_IO.Put_Line ("usage: prada [option] [package] [package] [...]");
+      Ada.Text_IO.Put_Line ("usage: prada [option] [package]");
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line ("   -Ss|-Ssq    - searches for package");
-      --  Ada.Text_IO.Put_Line ("   -Si         - outputs info for package");
-   end Display_Help;
+      GNAT.OS_Lib.OS_Exit (0);
+   end DisplayHelp;
+
+   procedure ParseCommandLine is
+   begin
+      loop
+         case GNAT.Command_Line.Getopt ("S Si Ss Ssq h -help") is
+            when ASCII.NUL =>
+               exit;
+            when 'S' =>
+               if GNAT.Command_Line.Full_Switch = "S" then
+                  mode := Install;
+               elsif GNAT.Command_Line.Full_Switch = "Si" then
+                  mode := Info;
+               elsif GNAT.Command_Line.Full_Switch = "Ss" then
+                  mode := Search;
+               elsif GNAT.Command_Line.Full_Switch = "Ssq" then
+                  mode := SearchQuick;
+               else
+                  raise GNAT.Command_Line.Invalid_Switch;
+               end if;
+            when 'h' => DisplayHelp;
+            when '-' =>
+               if GNAT.Command_Line.Full_Switch = "-help" then
+                  DisplayHelp;
+               end if;
+            when others => null;
+         end case;
+      end loop;
+
+      --  parse search query
+      loop
+         declare
+            S : constant String := GNAT.Command_Line.Get_Argument;
+         begin
+            exit when S'Length = 0;
+
+            Ada.Strings.Unbounded.Append (query, S & ' ');
+         end;
+      end loop;
+
+      exception
+         when GNAT.Command_Line.Invalid_Switch |
+              GNAT.Command_Line.Invalid_Parameter =>
+            Ada.Text_IO.Put_Line ("Prada: Option -'" &
+              GNAT.Command_Line.Full_Switch & "' is not valid.");
+            GNAT.OS_Lib.OS_Exit (1);
+   end ParseCommandLine;
 begin
-   loop
-      case Getopt ("h -help") is
-         when 'h' => Display_Help;
-         when '-' =>
-            if Full_Switch = "-help" then
-               Display_Help;
-            end if;
-         when others => exit;
-      end case;
-   end loop;
-exception
-   when Invalid_Switch | Invalid_Parameter =>
-      Ada.Text_IO.Put_Line ("Prada: Option '" &
-                             Full_Switch & "' is not valid.");
-      --  results := AurInterface.search ("aa");
+   ParseCommandLine;
+
+   if mode = Search then
+      Ada.Text_IO.Put_Line ("Search!");
+   elsif mode = SearchQuick then
+      Ada.Text_IO.Put_Line ("Quick Search!");
+   elsif mode = Install then
+      Ada.Text_IO.Put_Line ("Install!");
+   elsif mode = Info then
+      Ada.Text_IO.Put_Line ("Info!");
+   end if;
 end prada;
