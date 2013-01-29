@@ -38,7 +38,7 @@ procedure prada is
 
    procedure DisplayHelp is
    begin
-      Ada.Text_IO.Put_Line ("usage: prada [option] [package]");
+      Ada.Text_IO.Put_Line ("usage: prada [option] [package] [package] [...]");
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line ("   -Ss|-Ssq    - searches for package");
       Ada.Text_IO.Put_Line ("   -h|--help   - outputs this message");
