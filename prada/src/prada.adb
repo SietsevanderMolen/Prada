@@ -4,7 +4,7 @@ with AurInterface;
 procedure prada is
    results : AurReply;
 begin
-   results := AurInterface.search ("vim-endwise");
+   results := AurInterface.search ("aa");
    --  Try to convert to a json object
    --  resultlist := ParseJSON (Strm     => To_String (str));
 
