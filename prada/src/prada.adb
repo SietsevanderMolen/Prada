@@ -34,7 +34,9 @@ procedure prada is
    query   : Ada.Strings.Unbounded.Unbounded_String;
 
    procedure DisplayHelp;
+   --  display a short description on how to use the program
    procedure ParseCommandLine;
+   --  Parse every switch on the command line
 
    procedure DisplayHelp is
    begin
