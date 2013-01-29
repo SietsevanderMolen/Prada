@@ -1,18 +1,13 @@
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-with JSONParser; use JSONParser;
-with AURParser; use AURParser;
-with rpcclient;
-with Ada.Text_IO; use Ada.Text_IO;
+with AurReplies; use AurReplies;
+with AurInterface;
 
 procedure prada is
-   str        : Unbounded_String;
-   resultlist : JSON_Value;
+   results : AurReply;
 begin
-   str := rpcclient.Get_JSON ("vim");
-
+   results := AurInterface.search ("vim-endwise");
    --  Try to convert to a json object
-   resultlist := ParseJSON (Strm     => To_String (str));
+   --  resultlist := ParseJSON (Strm     => To_String (str));
 
    --  Parse the json object
-   ParseAURResponse (json => resultlist);
+   --  ParseAURResponse (json => resultlist);
 end prada;
