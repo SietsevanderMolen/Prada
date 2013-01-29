@@ -1,4 +1,6 @@
 with Ada.Characters.Handling; use Ada.Characters.Handling;
+with Ada.Unchecked_Conversion;
+with GNAT.Encode_UTF8_String;
 
 -------------------
 -- GNATCOLL.JSON --
@@ -276,12 +278,27 @@ package body JSONParser is
                end if;
 
                case Text (Idx) is
+                  when 'u' | 'U' =>
+                     declare
+                        I : constant Short_Integer :=
+                           Short_Integer'Value
+                              ("16#" & Text (Idx + 1 .. Idx + 4) & "#");
+                           function Unch is new Ada.Unchecked_Conversion
+                              (Short_Integer, Wide_Character);
+                     begin
+                        Append
+                           (Unb,
+                           GNAT.Encode_UTF8_String.Encode_Wide_String
+                              ("" & Unch (I)));
+                        Idx := Idx + 4;
+                     end;
+
                   when '"' =>
                      Append (Unb, '"');
                   when '\' =>
                      Append (Unb, '\');
                   when '/' =>
-                     Append (Unb, '/');
+                     Append (Unb, '\');
                   when 'b' =>
                      Append (Unb, ASCII.BS);
                   when 'f' =>
