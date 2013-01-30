@@ -61,14 +61,25 @@ package body AurPackages is
       --  Print version
          To_String (this.Version) &
       --  Reset colour
-         Ada.Characters.Latin_1.ESC & "[0m");
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line (
-         --  Spaces to indent descriptions
-         To_String ("     " &
-         --  Description
-         this.Description)
+         Ada.Characters.Latin_1.ESC & "[0m"
       );
+      --  Only print if package is out of date
+      if this.OutOfDate > 1 then
+         Ada.Text_IO.Put (
+            " " &
+            Ada.Characters.Latin_1.ESC & "[31;1m" &
+            "Out of date" &
+            Ada.Characters.Latin_1.ESC & "[0m"
+            );
+      end if;
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.Put (
+         --  Spaces to indent descriptions
+         "    " &
+         --  Description
+         To_String (this.Description)
+      );
+      Ada.Text_IO.New_Line;
    end PrettyPrint;
 
    procedure QuickPrint (this : AurPackage) is
