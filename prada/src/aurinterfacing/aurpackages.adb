@@ -1,5 +1,6 @@
 with Ada.Text_IO;
 with Ada.Characters.Latin_1;
+with Ada.Integer_Text_IO;
 
 package body AurPackages is
    function Create (
@@ -39,14 +40,35 @@ package body AurPackages is
 
    procedure PrettyPrint (this : AurPackage) is
    begin
-      Ada.Text_IO.Put_Line (Ada.Strings.Unbounded.To_String (
-         Natural'Image (this.RefNum) & " " &
-         Ada.Characters.Latin_1.ESC & "[34;1m" & "aur/" &
-         Ada.Characters.Latin_1.ESC & "[0;1m" & this.Name & " " &
-         Ada.Characters.Latin_1.ESC & "[30;1m" & this.Version
-      ));
-      Ada.Text_IO.Put (Ada.Characters.Latin_1.ESC & "[0m");
-      Ada.Text_IO.Put_Line (To_String ("     " & this.Description));
+      --  Print reference number. Width=2 because no more than 99 results
+      --  are usually shown anyway
+      Ada.Integer_Text_IO.Put (this.RefNum, Width => 2);
+      Ada.Text_IO.Put (
+      --  A space to separate the refnum and name
+         " " &
+      --  Change to blue colour
+         Ada.Characters.Latin_1.ESC & "[34;1m" &
+      --  Print aur identifier
+         "aur/" &
+      --  Disable blue color
+         Ada.Characters.Latin_1.ESC & "[0;1m" &
+      --  Print name
+         To_String (this.Name) &
+      --  A space to separate the name and version
+         " " &
+      --  Change to gray colour
+         Ada.Characters.Latin_1.ESC & "[30;1m" &
+      --  Print version
+         To_String (this.Version) &
+      --  Reset colour
+         Ada.Characters.Latin_1.ESC & "[0m");
+      Ada.Text_IO.New_Line;
+      Ada.Text_IO.Put_Line (
+         --  Spaces to indent descriptions
+         To_String ("     " &
+         --  Description
+         this.Description)
+      );
    end PrettyPrint;
 
    procedure QuickPrint (this : AurPackage) is
