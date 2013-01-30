@@ -298,7 +298,7 @@ package body JSONParser is
                   when '\' =>
                      Append (Unb, '\');
                   when '/' =>
-                     Append (Unb, '\');
+                     Append (Unb, '/');
                   when 'b' =>
                      Append (Unb, ASCII.BS);
                   when 'f' =>
