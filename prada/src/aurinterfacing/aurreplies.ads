@@ -22,6 +22,9 @@ package AurReplies is
 
    procedure PrettyPrintResults (Reply : AurReply);
    --  Pretty print all the results in this reply
+   --
+   procedure QuickPrintResults (Reply : AurReply);
+   --  Quick print all the results in this reply eg. just the title
 
 private
    type AurReply is tagged
@@ -33,4 +36,7 @@ private
 
    procedure PrettyPrintResult (Position : Cursor);
    --  Pretty prints a single result at the given position
+   --
+   procedure QuickPrintResult (Position : Cursor);
+   --  Quick prints a single result at the given position eg. just the title
 end AurReplies;

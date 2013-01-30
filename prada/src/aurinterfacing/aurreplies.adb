@@ -47,4 +47,19 @@ package body AurReplies is
    begin
       Reply.results.Iterate (Process   => PrettyPrintResult'Access);
    end PrettyPrintResults;
+
+   procedure QuickPrintResult (
+      Position : Cursor
+      ) is
+      Result : constant AurPackage := Element (Position => Position);
+   begin
+      QuickPrint (Result);
+   end QuickPrintResult;
+
+   procedure QuickPrintResults (
+      Reply : AurReply
+      ) is
+   begin
+      Reply.results.Iterate (Process   => QuickPrintResult'Access);
+   end QuickPrintResults;
 end AurReplies;

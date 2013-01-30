@@ -40,4 +40,9 @@ package body AurPackages is
       Put_Line (To_Unbounded_String ("Description: ") & this.Description);
       Put_Line (To_Unbounded_String ("URL: ") & this.URL);
    end PrettyPrint;
+
+   procedure QuickPrint (this : AurPackage) is
+   begin
+      Put_Line (this.Name);
+   end QuickPrint;
 end AurPackages;

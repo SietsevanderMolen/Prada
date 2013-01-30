@@ -78,10 +78,13 @@ begin
       results := AurInterface.search (query);
       results.PrettyPrintResults;
    elsif mode = SearchQuick then
-      Ada.Text_IO.Put_Line ("Quick Search!");
+      results := AurInterface.search (query);
+      results.QuickPrintResults;
    elsif mode = Install then
       Ada.Text_IO.Put_Line ("Install!");
    elsif mode = Info then
       Ada.Text_IO.Put_Line ("Info!");
+   elsif mode = Nop then
+      Ada.Text_IO.Put_Line ("No operation mode specified");
    end if;
 end prada;
