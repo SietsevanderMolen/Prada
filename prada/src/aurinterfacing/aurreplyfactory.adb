@@ -5,7 +5,8 @@ package body AurReplyFactory is
    --  Parses a single search result  --
    -------------------------------------
    function CreateAurPackage
-      (json : in JSON_Value) return AurPackage
+      (json   : in JSON_Value;
+       refnum : in Natural) return AurPackage
    is
       res         : AurPackage;
    begin
@@ -22,7 +23,8 @@ package body AurReplyFactory is
          Get (Val => json, Field => "FirstSubmitted"),
          Get (Val => json, Field => "LastModified"),
          Get (Val => json, Field => "URL"),
-         Get (Val => json, Field => "URLPath")
+         Get (Val => json, Field => "URLPath"),
+         refnum
       );
       return res;
    end CreateAurPackage;
@@ -70,7 +72,8 @@ package body AurReplyFactory is
             for J in 1 .. Array_Length loop
                A_reply_Value := Get (Arr   => A_reply_Array,
                                     Index => J);
-               tempresults.Append (CreateAurPackage (A_reply_Value));
+               tempresults.Append (
+                  CreateAurPackage (A_reply_Value, J));
             end loop;
 
             --  Create the actual AurReply object

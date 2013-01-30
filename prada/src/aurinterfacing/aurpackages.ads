@@ -16,7 +16,8 @@ package AurPackages is
       Submitted   : Positive;
       Modified    : Positive;
       URL         : Unbounded_String;
-      URLPath     : Unbounded_String
+      URLPath     : Unbounded_String;
+      RefNum      : Natural
    ) return AurPackage;
 
    procedure PrettyPrint (this : AurPackage);
@@ -40,5 +41,6 @@ private
          Modified    : Positive;
          URL         : Unbounded_String;
          URLPath     : Unbounded_String;
+         RefNum      : Natural;
       end record;
 end AurPackages;

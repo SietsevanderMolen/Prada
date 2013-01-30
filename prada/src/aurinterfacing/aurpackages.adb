@@ -1,4 +1,5 @@
-with Ada.Text_IO.Unbounded_IO; use Ada.Text_IO.Unbounded_IO;
+with Ada.Text_IO;
+with Ada.Characters.Latin_1;
 
 package body AurPackages is
    function Create (
@@ -14,7 +15,8 @@ package body AurPackages is
       Submitted   : Positive;
       Modified    : Positive;
       URL         : Unbounded_String;
-      URLPath     : Unbounded_String
+      URLPath     : Unbounded_String;
+      RefNum      : Natural
       ) return AurPackage is
       Temp : AurPackage;
    begin
@@ -31,18 +33,24 @@ package body AurPackages is
       Temp.Modified := Modified;
       Temp.URL := URL;
       Temp.URLPath := URLPath;
+      Temp.RefNum := RefNum;
       return Temp;
    end Create;
 
    procedure PrettyPrint (this : AurPackage) is
    begin
-      Put_Line (To_Unbounded_String ("Name: ") & this.Name);
-      Put_Line (To_Unbounded_String ("Description: ") & this.Description);
-      Put_Line (To_Unbounded_String ("URL: ") & this.URL);
+      Ada.Text_IO.Put_Line (Ada.Strings.Unbounded.To_String (
+         Natural'Image (this.RefNum) & " " &
+         Ada.Characters.Latin_1.ESC & "[34;1m" & "aur/" &
+         Ada.Characters.Latin_1.ESC & "[0;1m" & this.Name & " " &
+         Ada.Characters.Latin_1.ESC & "[30;1m" & this.Version
+      ));
+      Ada.Text_IO.Put (Ada.Characters.Latin_1.ESC & "[0m");
+      Ada.Text_IO.Put_Line (To_String ("     " & this.Description));
    end PrettyPrint;
 
    procedure QuickPrint (this : AurPackage) is
    begin
-      Put_Line (this.Name);
+      Ada.Text_IO.Put_Line (Ada.Strings.Unbounded.To_String (this.Name));
    end QuickPrint;
 end AurPackages;
