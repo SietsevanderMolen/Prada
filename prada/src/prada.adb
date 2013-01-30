@@ -7,27 +7,6 @@ with Ada.Text_IO;
 
 procedure prada is
    type Run_Mode is (Nop, Search, SearchQuick, Install, Info);
-   type Variant_Record (Option : Run_Mode) is
-   record
-      --  common components
-      case Option is
-         when Nop =>
-            --  components for nop
-            null;
-         when Search =>
-            --  components for search
-            null;
-         when SearchQuick =>
-            --  components quick search
-            null;
-         when Install =>
-            --  components for install
-            null;
-         when Info =>
-            --  components for info
-            null;
-      end case;
-   end record;
 
    results : AurReply;
    mode    : Run_Mode;
@@ -96,7 +75,8 @@ begin
    ParseCommandLine;
 
    if mode = Search then
-      Ada.Text_IO.Put_Line ("Search!");
+      results := AurInterface.search (query);
+      results.PrettyPrintResults;
    elsif mode = SearchQuick then
       Ada.Text_IO.Put_Line ("Quick Search!");
    elsif mode = Install then

@@ -13,6 +13,16 @@ package AurReplies is
       results : Vector
    ) return AurReply;
 
+   function getType (reply : AurReply) return Unbounded_String;
+   --  Get the return type of this reply
+   function getResultCount (reply : AurReply) return Natural;
+   --  Get the amount of results from this reply
+   function getResults (reply : AurReply) return Vector;
+   --  Get the vector with results from this reply
+
+   procedure PrettyPrintResults (Reply : AurReply);
+   --  Pretty print all the results in this reply
+
 private
    type AurReply is tagged
       record
@@ -20,4 +30,7 @@ private
          resultCount : Natural;
          results     : Vector;
       end record;
+
+   procedure PrettyPrintResult (Position : Cursor);
+   --  Pretty prints a single result at the given position
 end AurReplies;

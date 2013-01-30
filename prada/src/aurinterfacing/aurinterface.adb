@@ -5,7 +5,7 @@ with Ada; use Ada;
 
 package body AurInterface is
    function info
-      (query : in String) return AurReply
+      (query : in Unbounded_String) return AurReply
    is
       json : Unbounded_String;
    begin
@@ -14,7 +14,7 @@ package body AurInterface is
    end info;
 
    function msearch
-      (query : in String) return AurReply
+      (query : in Unbounded_String) return AurReply
    is
       json : Unbounded_String;
    begin
@@ -23,7 +23,7 @@ package body AurInterface is
    end msearch;
 
    function multiinfo
-      (query : in String) return AurReply
+      (query : in Unbounded_String) return AurReply
    is
       json : Unbounded_String;
    begin
@@ -33,7 +33,7 @@ package body AurInterface is
 
    function PerformAurQuery
       (qtype : in String;
-       arg   : in String)
+       arg   : in Unbounded_String)
       return Unbounded_String
    is
       Page      : AWS.Response.Data;
@@ -45,7 +45,7 @@ package body AurInterface is
    begin
       --  Create the search url where we can reach the rpc
       url  := "https://aur.archlinux.org/rpc.php?type=" &
-      To_Unbounded_String (qtype) & "&arg=" & To_Unbounded_String (arg);
+      To_Unbounded_String (qtype) & "&arg=" & arg;
       Page := Client.Get (To_String (url));
       S    := AWS.Response.Status_Code (Page);
 
@@ -68,9 +68,9 @@ package body AurInterface is
    end PerformAurQuery;
 
    function search
-      (query : in String) return AurReply
+      (query : in Unbounded_String) return AurReply
    is
-      json : Unbounded_String;
+      json    : Unbounded_String;
    begin
       json := PerformAurQuery ("search", query);
       return createAurReply (To_String (json));

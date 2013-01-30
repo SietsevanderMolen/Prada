@@ -1,3 +1,4 @@
+[Prada||-ParseCommandline();-DisplayHelp()]
 [AurInterface|-aurUrl : constant String|+search(query : String) : AurReply;+msearch(query : String) : AurReply;+info(query : String) : AurReply;+multiinfo(query : String) : AurReply;]
 [AurReplyFactory|+createAurReply(json : String) : AurReply;-createAurPackage(json : JSON_Value): AurPackage]
 [JsonParser||]
