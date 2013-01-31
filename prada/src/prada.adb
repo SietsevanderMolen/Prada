@@ -20,6 +20,7 @@ procedure prada is
    begin
       Ada.Text_IO.Put_Line ("usage: prada [option] [package] [package] [...]");
       Ada.Text_IO.New_Line;
+      Ada.Text_IO.Put_Line ("   -S          - installs a package");
       Ada.Text_IO.Put_Line ("   -Ss|-Ssq    - searches for package");
       Ada.Text_IO.Put_Line ("   -h|--help   - outputs this message");
       GNAT.OS_Lib.OS_Exit (0);
@@ -82,6 +83,6 @@ begin
    elsif mode = DoInfo then
       Ada.Text_IO.Put_Line ("Info!");
    elsif mode = Nop then
-      Ada.Text_IO.Put_Line ("No operation mode specified");
+      DisplayHelp;
    end if;
 end prada;
