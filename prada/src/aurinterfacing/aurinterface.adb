@@ -2,8 +2,30 @@ with AurReplyFactory; use AurReplyFactory;
 with AWS.Client, AWS.Response, AWS.Messages;
 use  AWS, AWS.Messages;
 with Ada; use Ada;
+with Interfaces.C; use Interfaces.C;
 
 package body AurInterface is
+   AurURL : constant String := "https://aur.archlinux.org/";
+
+   procedure DownloadFile
+      (Url  : Unbounded_String;
+      Dest : Unbounded_String
+      )
+   is
+      function Sys (Arg : char_array) return Integer;
+      pragma Import (C, Sys, "system");
+      Ret_Val : Integer;
+      pragma Unreferenced (Ret_Val);
+   begin
+      Ret_Val := Sys (To_C (To_String (Url & " > " & Dest)));
+   end DownloadFile;
+
+   function GetAurURL return String
+   is
+   begin
+      return AurURL;
+   end GetAurURL;
+
    function info
       (query : in Unbounded_String) return AurReply
    is

@@ -42,12 +42,6 @@ package body AurPackages is
       return this.Description;
    end GetDescription;
 
-   function GetURLPath (
-      this : AurPackage) return Unbounded_String is
-   begin
-      return this.URLPath;
-   end GetURLPath;
-
    function GetName (
       this : AurPackage) return Unbounded_String is
    begin
@@ -65,6 +59,12 @@ package body AurPackages is
    begin
       return this.RefNum;
    end GetRefNum;
+
+   function GetURLPath (
+      this : AurPackage) return Unbounded_String is
+   begin
+      return this.URLPath;
+   end GetURLPath;
 
    function GetVersion (
       this : AurPackage) return Unbounded_String is

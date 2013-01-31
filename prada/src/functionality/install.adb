@@ -2,46 +2,19 @@ with Ada.Text_IO;
 with AurReplies;
 with Search;
 with GNAT.Expect; use GNAT.Expect;
-with Interfaces.C; use Interfaces.C;
 with Ada.Environment_Variables;
+with Interfaces.C; use Interfaces.C;
+with AurInterface;
 
 package body Install is
-   function RequestTempFolder (Pkg : AurPackages.AurPackage) return String
-   is
-      function Sys (Arg : char_array) return Integer;
-      pragma Import (C, Sys, "system");
-      Ret_Val : Integer;
-      TmpDir  : Unbounded_String;
-      pragma Unreferenced (Ret_Val);
-   begin
-      --  Set the temp dir as /tmp if it's not specd in $TMPDIR
-      if Ada.Environment_Variables.Exists (Name => "TMPDIR") then
-         TmpDir := To_Unbounded_String
-            (Ada.Environment_Variables.Value (Name => "TMPDIR"));
-      else
-         TmpDir := To_Unbounded_String ("/tmp");
-      end if;
-
-      --  Use the systems TmpDir and uid to create our specific temp folder
-      TmpDir := TmpDir & "/pradatmp-" & FindUID
-               & "/" & To_String (Pkg.GetName);
-
-      --  Delete dir to purge it's contents; discard error if it doesn't exist
-      Ret_Val := Sys (To_C ("rm -rf " & To_String (TmpDir) & " >/dev/null"));
-      --  Make the actual directory again
-      Ret_Val := Sys (To_C ("mkdir -p " & To_String (TmpDir) & " >/dev/null"));
-      return To_String (TmpDir);
-   end RequestTempFolder;
-
    procedure DownloadPKG (Pkg : AurPackages.AurPackage)
    is
-      function Sys (Arg : char_array) return Integer;
-      pragma Import (C, Sys, "system");
-      Ret_Val : Integer;
+      url : Unbounded_String;
+      dst : Unbounded_String;
    begin
-      Ret_Val := Sys (To_C ( To_String (
-         ("wget https://aur.archlinux.org/" & Pkg.GetURLPath
-        & " -c -O " & RequestTempFolder (Pkg) & "/" & Pkg.GetName & ".tar.gz"))));
+      url := "curl -Lfs " & AurInterface.GetAurURL & Pkg.GetURLPath;
+      dst := RequestTempFolder (Pkg) & "/" & Pkg.GetName & ".tar.gz";
+      AurInterface.DownloadFile (url, dst);
    end DownloadPKG;
 
    function FindUID return String
@@ -98,6 +71,33 @@ package body Install is
       DownloadPKG (Pkg);
    end InstallPackage;
 
+   function RequestTempFolder (Pkg : AurPackages.AurPackage) return String
+   is
+      function Sys (Arg : char_array) return Integer;
+      pragma Import (C, Sys, "system");
+      Ret_Val : Integer;
+      TmpDir  : Unbounded_String;
+      pragma Unreferenced (Ret_Val);
+   begin
+      --  Set the temp dir as /tmp if it's not specd in $TMPDIR
+      if Ada.Environment_Variables.Exists (Name => "TMPDIR") then
+         TmpDir := To_Unbounded_String
+            (Ada.Environment_Variables.Value (Name => "TMPDIR"));
+      else
+         TmpDir := To_Unbounded_String ("/tmp");
+      end if;
+
+      --  Use the systems TmpDir and uid to create our specific temp folder
+      TmpDir := TmpDir & "/pradatmp-" & FindUID
+               & "/" & To_String (Pkg.GetName);
+
+      --  Delete dir to purge it's contents; discard error if it doesn't exist
+      Ret_Val := Sys (To_C ("rm -rf " & To_String (TmpDir) & " >/dev/null"));
+      --  Make the actual directory again
+      Ret_Val := Sys (To_C ("mkdir -p " & To_String (TmpDir) & " >/dev/null"));
+      return To_String (TmpDir);
+   end RequestTempFolder;
+
    function SplitInput
       (input : Unbounded_String)
       return GNAT.String_Split.Slice_Set
@@ -112,5 +112,4 @@ package body Install is
          Mode       => GNAT.String_Split.Multiple);
       return Subs;
    end SplitInput;
-
 end Install;

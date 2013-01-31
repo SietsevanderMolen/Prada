@@ -7,6 +7,8 @@ package AurInterface is
       (Natural, Ada.Strings.Unbounded.Unbounded_String);
    use QueryContainer;
 
+   function GetAurURL return String;
+
    function msearch
       (query : in Unbounded_String) return AurReply;
    function info
@@ -16,6 +18,11 @@ package AurInterface is
 
    function searchaur
     (query : in Unbounded_String) return AurReply;
+
+   procedure DownloadFile
+   (Url  : in Unbounded_String;
+    Dest : in Unbounded_String
+   );
 private
    function PerformAurQuery
        (qtype : in String;
