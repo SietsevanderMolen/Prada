@@ -1,5 +1,4 @@
 with AurReplyFactory; use AurReplyFactory;
-with Ada.Text_IO;
 with AurPackages;
 with AWS.Client, AWS.Response, AWS.Messages;
 use  AWS, AWS.Messages;
@@ -14,28 +13,6 @@ package body AurInterface is
       json := PerformAurQuery ("info", query);
       return createAurReply (To_String (json));
    end info;
-
-   procedure install
-      (query : in Unbounded_String)
-   is
-      results      : AurReply;
-   begin
-      --  results := Search.Search (query);
-
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line
-         ("Type number to install. Separate each number with a space.");
-      Ada.Text_IO.Put ("Numbers: ");
-
-      Ada.Text_IO.Put_Line (Ada.Text_IO.Get_Line);
-
-      for i in results.getResults.First_Index
-      .. results.getResults.Last_Index loop
-         if AurPackages.GetRefNum (results.getResults.Element (i)) = 9 then
-            AurReplies.InstallPackage (results.getResults.Element (i));
-         end if;
-      end loop;
-   end install;
 
    function msearch
       (query : in Unbounded_String) return AurReply
@@ -90,15 +67,6 @@ package body AurInterface is
       str := AWS.Response.Message_Body (Page);
       return str;
    end PerformAurQuery;
-
-   function search
-      (query : in Unbounded_String) return AurReply
-   is
-      json    : Unbounded_String;
-   begin
-      json := PerformAurQuery ("search", query);
-      return createAurReply (To_String (json));
-   end search;
 
    function searchaur
       (query : in Unbounded_String) return AurReply

@@ -6,9 +6,10 @@ with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 with QuickSearch;
 with Search;
+with Install;
 
 procedure prada is
-   type Run_Mode is (Nop, NormalSearch, SearchQuick, Install, Info);
+   type Run_Mode is (Nop, DoSearch, DoQuickSearch, DoInstall, DoInfo);
 
    results : AurReply;
    mode    : Run_Mode;
@@ -36,13 +37,13 @@ procedure prada is
                exit;
             when 'S' =>
                if GNAT.Command_Line.Full_Switch = "S" then
-                  mode := Install;
+                  mode := DoInstall;
                elsif GNAT.Command_Line.Full_Switch = "Si" then
-                  mode := Info;
+                  mode := DoInfo;
                elsif GNAT.Command_Line.Full_Switch = "Ss" then
-                  mode := NormalSearch;
+                  mode := DoSearch;
                elsif GNAT.Command_Line.Full_Switch = "Ssq" then
-                  mode := SearchQuick;
+                  mode := DoQuickSearch;
                else
                   raise GNAT.Command_Line.Invalid_Switch;
                end if;
@@ -76,13 +77,13 @@ procedure prada is
 begin
    ParseCommandLine;
 
-   if mode = NormalSearch then
+   if mode = DoSearch then
       Search.Search (query);
-   elsif mode = SearchQuick then
+   elsif mode = DoQuickSearch then
       QuickSearch.Search (query);
-   elsif mode = Install then
-      AurInterface.install (query);
-   elsif mode = Info then
+   elsif mode = DoInstall then
+      Install.Install (query);
+   elsif mode = DoInfo then
       Ada.Text_IO.Put_Line ("Info!");
    elsif mode = Nop then
       Ada.Text_IO.Put_Line ("No operation mode specified");

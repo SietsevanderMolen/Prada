@@ -63,7 +63,17 @@ package body Search is
    is
       results : AurReplies.AurReply;
    begin
-      results := AurInterface.search (Query);
+      results := AurInterface.searchaur (Query);
       PrettyPrintResults (results);
+   end Search;
+
+   function Search
+      (Query : in Ada.Strings.Unbounded.Unbounded_String) return AurReply
+   is
+      results : AurReplies.AurReply;
+   begin
+      results := AurInterface.searchaur (Query);
+      PrettyPrintResults (results);
+      return results;
    end Search;
 end Search;

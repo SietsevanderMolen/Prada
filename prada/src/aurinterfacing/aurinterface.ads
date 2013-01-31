@@ -7,23 +7,18 @@ package AurInterface is
       (Natural, Ada.Strings.Unbounded.Unbounded_String);
    use QueryContainer;
 
-   function search
-      (query : in Unbounded_String) return AurReply;
    function msearch
       (query : in Unbounded_String) return AurReply;
    function info
       (query : in Unbounded_String) return AurReply;
-   procedure install
-      (query : in Unbounded_String);
    function multiinfo
       (query : in Unbounded_String) return AurReply;
+
+   function searchaur
+    (query : in Unbounded_String) return AurReply;
 private
    function PerformAurQuery
        (qtype : in String;
         arg : in Unbounded_String)
        return Unbounded_String;
-
-    function searchaur
-       (query : in Unbounded_String) return AurReply;
-
 end AurInterface;

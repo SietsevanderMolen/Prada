@@ -22,7 +22,7 @@ package body QuickSearch is
    is
       results : AurReplies.AurReply;
    begin
-      results := AurInterface.search (Query);
+      results := AurInterface.searchaur (Query);
       QuickPrintResults (results);
    end Search;
 end QuickSearch;
