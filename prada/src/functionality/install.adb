@@ -68,8 +68,65 @@ package body Install is
       (Pkg        : AurPackages.AurPackage)
    is
    begin
+      PurgeTempFolder (Pkg);
+      PurgeBuildFolder (Pkg);
       DownloadPKG (Pkg);
+      UnzipPKG (Pkg);
    end InstallPackage;
+
+   procedure PurgeBuildFolder (Pkg : AurPackages.AurPackage)
+   is
+      function Sys (Arg : char_array) return Integer;
+      pragma Import (C, Sys, "system");
+      Ret_Val : Integer;
+      TmpDir  : Unbounded_String;
+      pragma Unreferenced (Ret_Val);
+   begin
+      --  Delete dir to purge it's contents; discard error if it doesn't exist
+      Ret_Val := Sys (To_C ("rm -rf "
+         & RequestBuildFolder (Pkg) & " >/dev/null"));
+      --  Make the actual directory again
+      Ret_Val := Sys (To_C ("mkdir -p "
+         & RequestBuildFolder (Pkg) & " >/dev/null"));
+   end PurgeBuildFolder;
+
+   procedure PurgeTempFolder (Pkg : AurPackages.AurPackage)
+   is
+      function Sys (Arg : char_array) return Integer;
+      pragma Import (C, Sys, "system");
+      Ret_Val : Integer;
+      TmpDir  : Unbounded_String;
+      pragma Unreferenced (Ret_Val);
+   begin
+      --  Delete dir to purge it's contents; discard error if it doesn't exist
+      Ret_Val := Sys (To_C ("rm -rf "
+         & RequestTempFolder (Pkg) & " >/dev/null"));
+      --  Make the actual directory again
+      Ret_Val := Sys (To_C ("mkdir -p "
+         & RequestTempFolder (Pkg) & " >/dev/null"));
+   end PurgeTempFolder;
+
+   function RequestBuildFolder (Pkg : AurPackages.AurPackage) return String
+   is
+      function Sys (Arg : char_array) return Integer;
+      pragma Import (C, Sys, "system");
+      Ret_Val : Integer;
+      TmpDir  : Unbounded_String;
+      pragma Unreferenced (Ret_Val);
+   begin
+      --  Set the temp dir as /tmp if it's not specd in $TMPDIR
+      if Ada.Environment_Variables.Exists (Name => "TMPDIR") then
+         TmpDir := To_Unbounded_String
+            (Ada.Environment_Variables.Value (Name => "TMPDIR"));
+      else
+         TmpDir := To_Unbounded_String ("/tmp");
+      end if;
+
+      --  Use the systems TmpDir and uid to create our specific temp folder
+      TmpDir := TmpDir & "/pradabld-" & FindUID
+               & "/" & To_String (Pkg.GetName);
+      return To_String (TmpDir);
+   end RequestBuildFolder;
 
    function RequestTempFolder (Pkg : AurPackages.AurPackage) return String
    is
@@ -90,11 +147,6 @@ package body Install is
       --  Use the systems TmpDir and uid to create our specific temp folder
       TmpDir := TmpDir & "/pradatmp-" & FindUID
                & "/" & To_String (Pkg.GetName);
-
-      --  Delete dir to purge it's contents; discard error if it doesn't exist
-      Ret_Val := Sys (To_C ("rm -rf " & To_String (TmpDir) & " >/dev/null"));
-      --  Make the actual directory again
-      Ret_Val := Sys (To_C ("mkdir -p " & To_String (TmpDir) & " >/dev/null"));
       return To_String (TmpDir);
    end RequestTempFolder;
 
@@ -112,4 +164,17 @@ package body Install is
          Mode       => GNAT.String_Split.Multiple);
       return Subs;
    end SplitInput;
+
+   procedure UnzipPKG
+      (Pkg : AurPackages.AurPackage)
+   is
+      function Sys (Arg : char_array) return Integer;
+      pragma Import (C, Sys, "system");
+      Ret_Val : Integer;
+      Pragma Unreferenced (Ret_Val);
+   begin
+      Ret_Val := Sys (To_C(To_String ("tar xf " & RequestTempFolder (Pkg)
+      & "/" & Pkg.GetName & ".tar.gz -C " & RequestBuildFolder (Pkg)
+      & " --strip-components=1")));
+   end UnzipPKG;
 end Install;

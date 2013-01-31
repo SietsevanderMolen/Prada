@@ -17,10 +17,21 @@ private
    --  Split a string by spaces
 
    function RequestTempFolder (Pkg : AurPackages.AurPackage) return String;
+   --  Create a temporary folder for this download/installation
+
+   function RequestBuildFolder (Pkg : AurPackages.AurPackage) return String;
    --  Create a temporary folder for this build/installation
+
+   procedure PurgeTempFolder (Pkg : AurPackages.AurPackage);
+   --  Purges the temporary folder for this download/installation
+
+   procedure PurgeBuildFolder (Pkg : AurPackages.AurPackage);
+   --  Purges the temporary folder for this build/installation
 
    function FindUID return String;
    --  Finds the user id for the user parenting this process
 
    procedure DownloadPKG (Pkg : AurPackages.AurPackage);
+
+   procedure UnzipPKG (Pkg : AurPackages.AurPackage);
 end Install;
