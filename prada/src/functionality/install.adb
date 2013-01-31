@@ -1,10 +1,47 @@
 with Ada.Text_IO;
 with AurReplies;
 with Search;
+with GNAT.Expect; use GNAT.Expect;
+with Interfaces.C; use Interfaces.C;
+with Ada.Environment_Variables;
 
 package body Install is
+   function CreateTempFolder (Name : String) return Integer
+   is
+      function Sys (Arg : char_array) return Integer;
+      pragma Import (C, Sys, "system");
+      Ret_Val : Integer;
+      TmpDir  : Unbounded_String;
+   begin
+      --  Set the temp dir as /tmp if it's not specd in $TMPDIR
+      if Ada.Environment_Variables.Exists (Name => "TMPDIR") then
+         TmpDir := To_Unbounded_String
+            (Ada.Environment_Variables.Value (Name => "TMPDIR"));
+      else
+         TmpDir := To_Unbounded_String ("/tmp");
+      end if;
+
+      --  Make the actual directory (or try to)
+      Ret_Val :=
+        Sys (To_C ("mkdir " & To_String (TmpDir) & "/pradatmp-" & Name));
+
+      return Ret_Val;
+   end CreateTempFolder;
+
+   function FindUID return String
+   is
+      Fd      : Process_Descriptor;
+      Timeout : constant Integer := 1000; -- 1 sec
+      Result  : Expect_Match;
+   begin
+      GNAT.Expect.Non_Blocking_Spawn (Fd, "/usr/bin/id", (1 => new String'
+         ("-u")));
+      GNAT.Expect.Expect (Fd, Result, ".*", Timeout);
+      return GNAT.Expect.Expect_Out (Fd);
+   end FindUID;
+
    procedure Install
-      (Query : Ada.Strings.Unbounded.Unbounded_String)
+      (Query : Unbounded_String)
    is
       results : AurReplies.AurReply;
       Subs    : GNAT.String_Split.Slice_Set;
@@ -17,7 +54,7 @@ package body Install is
       Ada.Text_IO.Put ("Numbers: ");
 
       --  Split the string by spaces so we keep the numbers
-      Subs := SplitInput (Ada.Strings.Unbounded.To_Unbounded_String
+      Subs := SplitInput (To_Unbounded_String
          (Ada.Text_IO.Get_Line));
 
       for I in 1 .. GNAT.String_Split.Slice_Count (Subs) loop
@@ -39,19 +76,18 @@ package body Install is
    end Install;
 
    procedure InstallPackage
-      (Pkg : AurPackages.AurPackage)
+      (Pkg        : AurPackages.AurPackage)
    is
    begin
-      Ada.Text_IO.Put_Line ("Installing: "
-         & Ada.Strings.Unbounded.To_String (Pkg.GetName));
+      null;
    end InstallPackage;
 
    function SplitInput
-      (input : Ada.Strings.Unbounded.Unbounded_String)
+      (input : Unbounded_String)
       return GNAT.String_Split.Slice_Set
    is
       Subs : GNAT.String_Split.Slice_Set;
-      Data : constant String := Ada.Strings.Unbounded.To_String (input);
+      Data : constant String := To_String (input);
    begin
       GNAT.String_Split.Create
          (S          => Subs,
