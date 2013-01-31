@@ -34,4 +34,6 @@ private
    procedure DownloadPKG (Pkg : AurPackages.AurPackage);
 
    procedure UnzipPKG (Pkg : AurPackages.AurPackage);
+
+   procedure BuildPKG (Pkg : AurPackages.AurPackage);
 end Install;

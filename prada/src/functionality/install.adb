@@ -7,6 +7,19 @@ with Interfaces.C; use Interfaces.C;
 with AurInterface;
 
 package body Install is
+
+   procedure BuildPKG
+      (Pkg : AurPackages.AurPackage)
+   is
+      function Sys (Arg : char_array) return Integer;
+      pragma Import (C, Sys, "system");
+      Ret_Val : Integer;
+      Pragma Unreferenced (Ret_Val);
+   begin
+      Ret_Val := Sys (To_C (
+         "cd " & RequestBuildFolder (Pkg) & " && makepkg -i"));
+   end BuildPKG;
+
    procedure DownloadPKG (Pkg : AurPackages.AurPackage)
    is
       url : Unbounded_String;
@@ -45,6 +58,7 @@ package body Install is
       --  Split the string by spaces so we keep the numbers
       Subs := SplitInput (To_Unbounded_String
          (Ada.Text_IO.Get_Line));
+      Ada.Text_IO.New_Line;
 
       for I in 1 .. GNAT.String_Split.Slice_Count (Subs) loop
          --  Loop though the substrings
@@ -72,6 +86,7 @@ package body Install is
       PurgeBuildFolder (Pkg);
       DownloadPKG (Pkg);
       UnzipPKG (Pkg);
+      BuildPKG (Pkg);
    end InstallPackage;
 
    procedure PurgeBuildFolder (Pkg : AurPackages.AurPackage)
@@ -173,7 +188,7 @@ package body Install is
       Ret_Val : Integer;
       Pragma Unreferenced (Ret_Val);
    begin
-      Ret_Val := Sys (To_C(To_String ("tar xf " & RequestTempFolder (Pkg)
+      Ret_Val := Sys (To_C (To_String ("tar xf " & RequestTempFolder (Pkg)
       & "/" & Pkg.GetName & ".tar.gz -C " & RequestBuildFolder (Pkg)
       & " --strip-components=1")));
    end UnzipPKG;
