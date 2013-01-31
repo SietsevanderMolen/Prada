@@ -6,7 +6,7 @@ with Interfaces.C; use Interfaces.C;
 with Ada.Environment_Variables;
 
 package body Install is
-   function CreateTempFolder (Name : String) return Integer
+   function CreateTempFolder (Pkg : AurPackages.AurPackage) return Integer
    is
       function Sys (Arg : char_array) return Integer;
       pragma Import (C, Sys, "system");
@@ -21,9 +21,17 @@ package body Install is
          TmpDir := To_Unbounded_String ("/tmp");
       end if;
 
-      --  Make the actual directory (or try to)
+      TmpDir := TmpDir & "/pradatmp-" & FindUID
+               & "/" & To_String (Pkg.GetName);
+
+      --  Delete dir to purge it's contents
+      Ret_Val := Sys (To_C ("rm -rf " & To_String (TmpDir) & " 2>/dev/null"));
+
+      --  Make the actual directory if it doesn't exist
       Ret_Val :=
-        Sys (To_C ("mkdir " & To_String (TmpDir) & "/pradatmp-" & Name));
+         Sys (To_C ("mkdir -p " & To_String (TmpDir)
+         & "/pradatmp-" & FindUID & "/"
+         & To_String (Pkg.GetName) & " 2>/dev/null"));
 
       return Ret_Val;
    end CreateTempFolder;
@@ -78,8 +86,9 @@ package body Install is
    procedure InstallPackage
       (Pkg        : AurPackages.AurPackage)
    is
+      ReturnValue : Integer;
    begin
-      null;
+      ReturnValue := CreateTempFolder (Pkg);
    end InstallPackage;
 
    function SplitInput

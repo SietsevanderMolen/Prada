@@ -16,7 +16,7 @@ private
       return GNAT.String_Split.Slice_Set;
    --  Split a string by spaces
 
-   function CreateTempFolder (Name : String) return Integer;
+   function CreateTempFolder (Pkg : AurPackages.AurPackage) return Integer;
    --  Create a temporary folder for this build/installation
 
    function FindUID return String;
