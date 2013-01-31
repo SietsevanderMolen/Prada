@@ -1,7 +1,5 @@
 with GNAT.Command_Line;
 with GNAT.OS_Lib;
-with AurReplies; use AurReplies;
-with AurInterface;
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 with QuickSearch;
@@ -10,8 +8,6 @@ with Install;
 
 procedure prada is
    type Run_Mode is (Nop, DoSearch, DoQuickSearch, DoInstall, DoInfo);
-
-   results : AurReply;
    mode    : Run_Mode;
    query   : Ada.Strings.Unbounded.Unbounded_String;
 

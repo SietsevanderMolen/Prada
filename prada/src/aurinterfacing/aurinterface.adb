@@ -1,5 +1,4 @@
 with AurReplyFactory; use AurReplyFactory;
-with AurPackages;
 with AWS.Client, AWS.Response, AWS.Messages;
 use  AWS, AWS.Messages;
 with Ada; use Ada;

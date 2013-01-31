@@ -8,7 +8,8 @@ package Search is
    --  Searches for the given query and presents the results
 
    function Search
-      (Query : Ada.Strings.Unbounded.Unbounded_String) return AurReplies.AurReply;
+      (Query : Ada.Strings.Unbounded.Unbounded_String)
+         return AurReplies.AurReply;
 private
    procedure PrettyPrint (Pkg : AurPackages.AurPackage);
    --  Pretty prints a single result

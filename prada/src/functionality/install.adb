@@ -1,8 +1,6 @@
 with Ada.Text_IO;
 with AurReplies;
-with AurPackages;
 with Search;
-with GNAT.String_Split;
 
 package body Install is
    procedure Install
@@ -19,25 +17,25 @@ package body Install is
       Ada.Text_IO.Put ("Numbers: ");
 
       --  Split the string by spaces so we keep the numbers
-      Subs := SplitInput (Ada.Strings.Unbounded.To_Unbounded_String (Ada.Text_IO.Get_Line));
+      Subs := SplitInput (Ada.Strings.Unbounded.To_Unbounded_String
+         (Ada.Text_IO.Get_Line));
 
       for I in 1 .. GNAT.String_Split.Slice_Count (Subs) loop
          --  Loop though the substrings
          declare
             Sub : constant String := GNAT.String_Split.Slice (Subs, I);
-            --  Pull the next substring out into a string object for easy handling.
+            --  Pull the next substring out into a string for easy handling.
          begin
             for i in results.getResults.First_Index ..
                results.getResults.Last_Index loop
                --  If this is a number we want to install, go for it
-               if AurPackages.GetRefNum (results.getResults.Element (i)) = Integer'Value (Sub) then
+               if AurPackages.GetRefNum (results.getResults.Element (i))
+                  = Integer'Value (Sub) then
                   InstallPackage (results.getResults.Element (i));
                end if;
             end loop;
          end;
       end loop;
-
-
    end Install;
 
    procedure InstallPackage
@@ -49,7 +47,7 @@ package body Install is
    end InstallPackage;
 
    function SplitInput
-      (input : Ada.Strings.Unbounded.Unbounded_String )
+      (input : Ada.Strings.Unbounded.Unbounded_String)
       return GNAT.String_Split.Slice_Set
    is
       Subs : GNAT.String_Split.Slice_Set;
