@@ -5,9 +5,10 @@ with AurInterface;
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 with QuickSearch;
+with Search;
 
 procedure prada is
-   type Run_Mode is (Nop, Search, SearchQuick, Install, Info);
+   type Run_Mode is (Nop, NormalSearch, SearchQuick, Install, Info);
 
    results : AurReply;
    mode    : Run_Mode;
@@ -39,7 +40,7 @@ procedure prada is
                elsif GNAT.Command_Line.Full_Switch = "Si" then
                   mode := Info;
                elsif GNAT.Command_Line.Full_Switch = "Ss" then
-                  mode := Search;
+                  mode := NormalSearch;
                elsif GNAT.Command_Line.Full_Switch = "Ssq" then
                   mode := SearchQuick;
                else
@@ -75,9 +76,8 @@ procedure prada is
 begin
    ParseCommandLine;
 
-   if mode = Search then
-      results := AurInterface.search (query);
-      results.PrettyPrintResults;
+   if mode = NormalSearch then
+      Search.Search (query);
    elsif mode = SearchQuick then
       QuickSearch.Search (query);
    elsif mode = Install then

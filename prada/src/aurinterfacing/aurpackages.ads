@@ -22,14 +22,17 @@ package AurPackages is
 
    function GetName (this : AurPackage) return Unbounded_String;
    --  Gets the name of this package
-
    function GetRefNum (this : AurPackage) return Natural;
    --  Gets the reference number of this package
+   function GetVersion (this : AurPackage) return Unbounded_String;
+   --  Gets the version of this package
+   function GetOutofdate (this : AurPackage) return Natural;
+   --  Gets the outofdate field for this package
+   function GetDescription (this : AurPackage) return Unbounded_String;
+   --  Gets the description for this package
 
    procedure Install (this : AurPackage);
    --  Installs this package
-   procedure PrettyPrint (this : AurPackage);
-   --  Pretty prints the aur package
 
 private
    type AurPackage is tagged

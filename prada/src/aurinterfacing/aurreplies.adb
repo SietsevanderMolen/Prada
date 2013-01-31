@@ -39,20 +39,4 @@ package body AurReplies is
    begin
       Pkg.Install;
    end InstallPackage;
-
-   procedure PrettyPrintResult (
-      Position : Cursor
-   ) is
-      Result : constant AurPackage := Element (Position => Position);
-   begin
-      PrettyPrint (Result);
-   end PrettyPrintResult;
-
-   procedure PrettyPrintResults (
-      Reply : AurReply
-   ) is
-   begin
-      Reply.results.Iterate (Process   => PrettyPrintResult'Access);
-   end PrettyPrintResults;
-
 end AurReplies;

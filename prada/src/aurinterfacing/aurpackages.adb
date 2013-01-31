@@ -1,6 +1,4 @@
 with Ada.Text_IO;
-with Ada.Characters.Latin_1;
-with Ada.Integer_Text_IO;
 
 package body AurPackages is
    function Create (
@@ -38,11 +36,23 @@ package body AurPackages is
       return Temp;
    end Create;
 
+   function GetDescription (
+      this : AurPackage) return Unbounded_String is
+   begin
+      return this.Description;
+   end GetDescription;
+
    function GetName (
       this : AurPackage) return Unbounded_String is
    begin
       return this.Name;
    end GetName;
+
+   function GetOutofdate (
+      this : AurPackage) return Natural is
+   begin
+      return this.OutOfDate;
+   end GetOutofdate;
 
    function GetRefNum (
       this : AurPackage) return Natural is
@@ -50,52 +60,14 @@ package body AurPackages is
       return this.RefNum;
    end GetRefNum;
 
+   function GetVersion (
+      this : AurPackage) return Unbounded_String is
+   begin
+      return this.Version;
+   end GetVersion;
+
    procedure Install (this : AurPackage) is
    begin
       Ada.Text_IO.Put_Line (To_String (this.URLPath));
    end Install;
-
-   procedure PrettyPrint (this : AurPackage) is
-   begin
-      --  Print reference number. Width=2 because no more than 99 results
-      --  are usually shown anyway
-      Ada.Integer_Text_IO.Put (this.RefNum, Width => 2);
-      Ada.Text_IO.Put (
-      --  A space to separate the refnum and name
-         " " &
-      --  Change to blue colour
-         Ada.Characters.Latin_1.ESC & "[34;1m" &
-      --  Print aur identifier
-         "aur/" &
-      --  Disable blue color
-         Ada.Characters.Latin_1.ESC & "[0;1m" &
-      --  Print name
-         To_String (this.Name) &
-      --  A space to separate the name and version
-         " " &
-      --  Change to gray colour
-         Ada.Characters.Latin_1.ESC & "[30;1m" &
-      --  Print version
-         To_String (this.Version) &
-      --  Reset colour
-         Ada.Characters.Latin_1.ESC & "[0m"
-      );
-      --  Only print if package is out of date
-      if this.OutOfDate > 1 then
-         Ada.Text_IO.Put (
-            " " &
-            Ada.Characters.Latin_1.ESC & "[31;1m" &
-            "Out of date" &
-            Ada.Characters.Latin_1.ESC & "[0m"
-            );
-      end if;
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put (
-         --  Spaces to indent descriptions
-         "    " &
-         --  Description
-         To_String (this.Description)
-      );
-      Ada.Text_IO.New_Line;
-   end PrettyPrint;
 end AurPackages;

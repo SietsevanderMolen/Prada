@@ -18,13 +18,9 @@ package body AurInterface is
    procedure install
       (query : in Unbounded_String)
    is
-      json         : Unbounded_String;
       results      : AurReply;
-
    begin
-      json := PerformAurQuery ("search", query);
-      results := createAurReply (To_String (json));
-      results.PrettyPrintResults;
+      --  results := Search.Search (query);
 
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line
@@ -103,4 +99,13 @@ package body AurInterface is
       json := PerformAurQuery ("search", query);
       return createAurReply (To_String (json));
    end search;
+
+   function searchaur
+      (query : in Unbounded_String) return AurReply
+   is
+      json    : Unbounded_String;
+   begin
+      json := PerformAurQuery ("search", query);
+      return createAurReply (To_String (json));
+   end searchaur;
 end AurInterface;

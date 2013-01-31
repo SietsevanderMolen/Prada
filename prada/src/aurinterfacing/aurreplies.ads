@@ -20,9 +20,6 @@ package AurReplies is
    function getResults (reply : AurReply) return Vector;
    --  Get the vector with results from this reply
 
-   procedure PrettyPrintResults (Reply : AurReply);
-   --  Pretty print all the results in this reply
-
    procedure InstallPackage (Pkg : AurPackage);
    --  Install the package identified by RefNum
 
@@ -33,7 +30,4 @@ private
          resultCount : Natural;
          results     : Vector;
       end record;
-
-   procedure PrettyPrintResult (Position : Cursor);
-   --  Pretty prints a single result at the given position
 end AurReplies;

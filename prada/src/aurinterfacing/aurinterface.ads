@@ -22,4 +22,8 @@ private
        (qtype : in String;
         arg : in Unbounded_String)
        return Unbounded_String;
+
+    function searchaur
+       (query : in Unbounded_String) return AurReply;
+
 end AurInterface;
