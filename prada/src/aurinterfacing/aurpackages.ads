@@ -30,6 +30,8 @@ package AurPackages is
    --  Gets the outofdate field for this package
    function GetDescription (this : AurPackage) return Unbounded_String;
    --  Gets the description for this package
+   function GetURLPath (this : AurPackage) return Unbounded_String;
+   --  Gets the URLpath for this package
 
    procedure Install (this : AurPackage);
    --  Installs this package

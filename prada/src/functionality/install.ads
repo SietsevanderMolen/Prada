@@ -16,9 +16,11 @@ private
       return GNAT.String_Split.Slice_Set;
    --  Split a string by spaces
 
-   function CreateTempFolder (Pkg : AurPackages.AurPackage) return Integer;
+   function RequestTempFolder (Pkg : AurPackages.AurPackage) return String;
    --  Create a temporary folder for this build/installation
 
    function FindUID return String;
    --  Finds the user id for the user parenting this process
+
+   procedure DownloadPKG (Pkg : AurPackages.AurPackage);
 end Install;
