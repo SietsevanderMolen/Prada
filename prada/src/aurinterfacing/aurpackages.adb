@@ -38,6 +38,23 @@ package body AurPackages is
       return Temp;
    end Create;
 
+   function GetName (
+      this : AurPackage) return Unbounded_String is
+   begin
+      return this.Name;
+   end GetName;
+
+   function GetRefNum (
+      this : AurPackage) return Natural is
+   begin
+      return this.RefNum;
+   end GetRefNum;
+
+   procedure Install (this : AurPackage) is
+   begin
+      Ada.Text_IO.Put_Line (To_String (this.URLPath));
+   end Install;
+
    procedure PrettyPrint (this : AurPackage) is
    begin
       --  Print reference number. Width=2 because no more than 99 results
@@ -81,9 +98,4 @@ package body AurPackages is
       );
       Ada.Text_IO.New_Line;
    end PrettyPrint;
-
-   procedure QuickPrint (this : AurPackage) is
-   begin
-      Ada.Text_IO.Put_Line (Ada.Strings.Unbounded.To_String (this.Name));
-   end QuickPrint;
 end AurPackages;

@@ -20,10 +20,16 @@ package AurPackages is
       RefNum      : Natural
    ) return AurPackage;
 
+   function GetName (this : AurPackage) return Unbounded_String;
+   --  Gets the name of this package
+
+   function GetRefNum (this : AurPackage) return Natural;
+   --  Gets the reference number of this package
+
+   procedure Install (this : AurPackage);
+   --  Installs this package
    procedure PrettyPrint (this : AurPackage);
    --  Pretty prints the aur package
-   procedure QuickPrint (this : AurPackage);
-   --  Quickly prints the aur package, just the title for example
 
 private
    type AurPackage is tagged

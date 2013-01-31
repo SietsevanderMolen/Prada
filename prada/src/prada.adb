@@ -4,6 +4,7 @@ with AurReplies; use AurReplies;
 with AurInterface;
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
+with QuickSearch;
 
 procedure prada is
    type Run_Mode is (Nop, Search, SearchQuick, Install, Info);
@@ -78,10 +79,9 @@ begin
       results := AurInterface.search (query);
       results.PrettyPrintResults;
    elsif mode = SearchQuick then
-      results := AurInterface.search (query);
-      results.QuickPrintResults;
+      QuickSearch.Search (query);
    elsif mode = Install then
-      Ada.Text_IO.Put_Line ("Install!");
+      AurInterface.install (query);
    elsif mode = Info then
       Ada.Text_IO.Put_Line ("Info!");
    elsif mode = Nop then

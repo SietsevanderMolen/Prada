@@ -13,6 +13,8 @@ package AurInterface is
       (query : in Unbounded_String) return AurReply;
    function info
       (query : in Unbounded_String) return AurReply;
+   procedure install
+      (query : in Unbounded_String);
    function multiinfo
       (query : in Unbounded_String) return AurReply;
 private

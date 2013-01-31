@@ -14,28 +14,35 @@ package body AurReplies is
 
    function getResultCount (
       reply : AurReply
-      ) return Natural is
+   ) return Natural is
    begin
       return reply.resultCount;
    end getResultCount;
 
    function getResults (
       reply : AurReply
-      ) return Vector is
+   ) return Vector is
    begin
       return reply.results;
    end getResults;
 
    function getType (
       reply : AurReply
-      ) return Unbounded_String is
+   ) return Unbounded_String is
    begin
       return reply.replyType;
    end getType;
 
+   procedure InstallPackage (
+      Pkg : AurPackage
+   ) is
+   begin
+      Pkg.Install;
+   end InstallPackage;
+
    procedure PrettyPrintResult (
       Position : Cursor
-      ) is
+   ) is
       Result : constant AurPackage := Element (Position => Position);
    begin
       PrettyPrint (Result);
@@ -43,23 +50,9 @@ package body AurReplies is
 
    procedure PrettyPrintResults (
       Reply : AurReply
-      ) is
+   ) is
    begin
       Reply.results.Iterate (Process   => PrettyPrintResult'Access);
    end PrettyPrintResults;
 
-   procedure QuickPrintResult (
-      Position : Cursor
-      ) is
-      Result : constant AurPackage := Element (Position => Position);
-   begin
-      QuickPrint (Result);
-   end QuickPrintResult;
-
-   procedure QuickPrintResults (
-      Reply : AurReply
-      ) is
-   begin
-      Reply.results.Iterate (Process   => QuickPrintResult'Access);
-   end QuickPrintResults;
 end AurReplies;
