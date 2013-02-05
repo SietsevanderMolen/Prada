@@ -5,9 +5,11 @@ with Ada.Text_IO;
 with QuickSearch;
 with Search;
 with Install;
+with Update;
 
 procedure prada is
-   type Run_Mode is (Nop, DoSearch, DoQuickSearch, DoInstall, DoInfo);
+   type Run_Mode is (Nop, DoSearch, DoQuickSearch,
+                     DoInstall, DoUpdate, DoInfo);
    mode    : Run_Mode;
    query   : Ada.Strings.Unbounded.Unbounded_String;
 
@@ -22,6 +24,7 @@ procedure prada is
       Ada.Text_IO.New_Line;
       Ada.Text_IO.Put_Line ("   -S          - installs a package");
       Ada.Text_IO.Put_Line ("   -Ss|-Ssq    - searches for package");
+      Ada.Text_IO.Put_Line ("   -Su         - updates the aur packages");
       Ada.Text_IO.Put_Line ("   -h|--help   - outputs this message");
       GNAT.OS_Lib.OS_Exit (0);
    end DisplayHelp;
@@ -29,7 +32,7 @@ procedure prada is
    procedure ParseCommandLine is
    begin
       loop
-         case GNAT.Command_Line.Getopt ("S Si Ss Ssq h -help") is
+         case GNAT.Command_Line.Getopt ("S Si Ss Ssq Su h -help") is
             when ASCII.NUL =>
                exit;
             when 'S' =>
@@ -37,6 +40,8 @@ procedure prada is
                   mode := DoInstall;
                elsif GNAT.Command_Line.Full_Switch = "Si" then
                   mode := DoInfo;
+               elsif GNAT.Command_Line.Full_Switch = "Su" then
+                  mode := DoUpdate;
                elsif GNAT.Command_Line.Full_Switch = "Ss" then
                   mode := DoSearch;
                elsif GNAT.Command_Line.Full_Switch = "Ssq" then
@@ -68,7 +73,7 @@ procedure prada is
          when GNAT.Command_Line.Invalid_Switch |
               GNAT.Command_Line.Invalid_Parameter =>
             Ada.Text_IO.Put_Line ("Prada: Option -'" &
-              GNAT.Command_Line.Full_Switch & "' is not valid.");
+               GNAT.Command_Line.Full_Switch & "' is not valid.");
             GNAT.OS_Lib.OS_Exit (1);
    end ParseCommandLine;
 begin
@@ -80,6 +85,8 @@ begin
       QuickSearch.Search (query);
    elsif mode = DoInstall then
       Install.Install (query);
+   elsif mode = DoUpdate then
+      Update.Update;
    elsif mode = DoInfo then
       Ada.Text_IO.Put_Line ("Info!");
    elsif mode = Nop then
