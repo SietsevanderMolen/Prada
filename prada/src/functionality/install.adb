@@ -14,7 +14,7 @@ package body Install is
       function Sys (Arg : char_array) return Integer;
       pragma Import (C, Sys, "system");
       Ret_Val : Integer;
-      Pragma Unreferenced (Ret_Val);
+      pragma Unreferenced (Ret_Val);
    begin
       Ret_Val := Sys (To_C (
          "cd " & RequestBuildFolder (Pkg) & " && makepkg -i"));
@@ -94,7 +94,6 @@ package body Install is
       function Sys (Arg : char_array) return Integer;
       pragma Import (C, Sys, "system");
       Ret_Val : Integer;
-      TmpDir  : Unbounded_String;
       pragma Unreferenced (Ret_Val);
    begin
       --  Delete dir to purge it's contents; discard error if it doesn't exist
@@ -110,7 +109,6 @@ package body Install is
       function Sys (Arg : char_array) return Integer;
       pragma Import (C, Sys, "system");
       Ret_Val : Integer;
-      TmpDir  : Unbounded_String;
       pragma Unreferenced (Ret_Val);
    begin
       --  Delete dir to purge it's contents; discard error if it doesn't exist
@@ -123,8 +121,6 @@ package body Install is
 
    function RequestBuildFolder (Pkg : AurPackages.AurPackage) return String
    is
-      function Sys (Arg : char_array) return Integer;
-      pragma Import (C, Sys, "system");
       Ret_Val : Integer;
       TmpDir  : Unbounded_String;
       pragma Unreferenced (Ret_Val);
@@ -145,8 +141,6 @@ package body Install is
 
    function RequestTempFolder (Pkg : AurPackages.AurPackage) return String
    is
-      function Sys (Arg : char_array) return Integer;
-      pragma Import (C, Sys, "system");
       Ret_Val : Integer;
       TmpDir  : Unbounded_String;
       pragma Unreferenced (Ret_Val);
@@ -186,7 +180,7 @@ package body Install is
       function Sys (Arg : char_array) return Integer;
       pragma Import (C, Sys, "system");
       Ret_Val : Integer;
-      Pragma Unreferenced (Ret_Val);
+      pragma Unreferenced (Ret_Val);
    begin
       Ret_Val := Sys (To_C (To_String ("tar xf " & RequestTempFolder (Pkg)
       & "/" & Pkg.GetName & ".tar.gz -C " & RequestBuildFolder (Pkg)

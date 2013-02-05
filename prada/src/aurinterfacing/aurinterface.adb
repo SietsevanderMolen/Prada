@@ -3,6 +3,7 @@ with AWS.Client, AWS.Response, AWS.Messages;
 use  AWS, AWS.Messages;
 with Ada; use Ada;
 with Interfaces.C; use Interfaces.C;
+with Ada.Strings.Unbounded.Hash;
 
 package body AurInterface is
    AurURL : constant String := "https://aur.archlinux.org/";
@@ -29,9 +30,9 @@ package body AurInterface is
    function info
       (query : in Unbounded_String) return AurReply
    is
-      json : Unbounded_String;
+      json      : Unbounded_String;
    begin
-      json := PerformAurQuery ("info", query);
+      json := PerformAurQuery ("info", "&arg=" & query);
       return createAurReply (To_String (json));
    end info;
 
@@ -40,18 +41,36 @@ package body AurInterface is
    is
       json : Unbounded_String;
    begin
-      json := PerformAurQuery ("msearch", query);
+      json := PerformAurQuery ("msearch", "&arg=" & query);
       return createAurReply (To_String (json));
    end msearch;
 
    function multiinfo
-      (query : in Unbounded_String) return AurReply
+      (packages : in PackageMap.Map)
+         return AurReply
    is
+      use PackageMap;
+      curs : Cursor := First (packages);
+
       json : Unbounded_String;
+      AurQuery  : Unbounded_String;
    begin
-      json := PerformAurQuery ("multiinfo", query);
+      while Has_Element (curs) loop
+         AurQuery := AurQuery & "&arg[]="
+            & Key (curs);
+         Next (curs);
+      end loop;
+
+      json := PerformAurQuery ("multiinfo", AurQuery);
       return createAurReply (To_String (json));
    end multiinfo;
+
+   function Name_Hashed (id : Unbounded_String)
+   return Hash_Type
+   is
+   begin
+      return Ada.Strings.Unbounded.Hash (id);
+   end Name_Hashed;
 
    function PerformAurQuery
       (qtype : in String;
@@ -66,8 +85,8 @@ package body AurInterface is
       str       : Unbounded_String;
    begin
       --  Create the search url where we can reach the rpc
-      url  := "https://aur.archlinux.org/rpc.php?type=" &
-      To_Unbounded_String (qtype) & "&arg=" & arg;
+      url  := AurURL & "rpc.php?type=" &
+      To_Unbounded_String (qtype) & arg;
       Page := Client.Get (To_String (url));
       S    := AWS.Response.Status_Code (Page);
 
@@ -94,7 +113,7 @@ package body AurInterface is
    is
       json    : Unbounded_String;
    begin
-      json := PerformAurQuery ("search", query);
+      json := PerformAurQuery ("search", "&arg=" & query);
       return createAurReply (To_String (json));
    end searchaur;
 end AurInterface;
