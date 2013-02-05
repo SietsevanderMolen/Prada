@@ -1,5 +1,3 @@
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-with AurPackages;
 with GNAT.String_Split;
 
 package Update is

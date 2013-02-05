@@ -1,8 +1,6 @@
 with GNAT.Expect;
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Text_IO;
-with Ada.Strings.Maps;
-with Ada.Characters;
-with Ada.Characters.Latin_1;
 
 package body Update is
    function CanBeUpdated
@@ -43,23 +41,26 @@ package body Update is
 
    procedure Update is
       Subs        : GNAT.String_Split.Slice_Set;
-      PkgList     : String := GetInstalledPackages;
+      PkgList     : constant String := GetInstalledPackages;
    begin
       Ada.Text_IO.Put_Line ("Checking for installed packages");
       --  Subtract 1 here, because PkgList contains a newline at the end
-      Subs := SplitInputByNewline (PkgList (PkgList'First .. PkgList'Last - 1));
+      Subs := SplitInputByNewline
+               (PkgList (PkgList'First .. PkgList'Last - 1));
       Ada.Text_IO.Put_Line ("Checking for updates");
 
       for I in 1 .. GNAT.String_Split.Slice_Count (Subs) loop
          --  Loop though the substrings
          declare
-            --  Pull the next substring out into an unbounded string for easy use
-            Sub : Unbounded_String := To_Unbounded_String
+            --  Pull the next substring into an unbounded string for easy use
+            Sub : constant Unbounded_String := To_Unbounded_String
                   (GNAT.String_Split.Slice (Subs, I));
             --  Find the name
-            Name : String := Slice (Sub, 1, Index (Sub, " "));
+            Name : constant String
+               := Slice (Sub, 1, Index (Sub, " "));
             --  Find the version
-            Version : String := Slice (Sub, Index (Sub, " ")+1, Length (Sub));
+            Version : constant String
+               := Slice (Sub, Index (Sub, " ") + 1, Length (Sub));
          begin
             if CanBeUpdated (Name, Version) then
                Ada.Text_IO.Put_Line ("Name " & Name);
