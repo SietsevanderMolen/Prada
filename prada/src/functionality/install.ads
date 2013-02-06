@@ -6,11 +6,11 @@ package Install is
    procedure Install
       (Query : Unbounded_String);
    --  Shows the user a list of packages and asks which one to install
-private
+   --
    procedure InstallPackage
-      (Pkg        : AurPackages.AurPackage);
+      (Pkg : AurPackages.AurPackage);
    --  Installs a single package
-
+private
    function SplitInput
       (input : Unbounded_String)
       return GNAT.String_Split.Slice_Set;

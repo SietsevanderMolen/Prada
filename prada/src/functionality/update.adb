@@ -1,6 +1,9 @@
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Text_IO;
 with GNAT.Expect;
 with AurPackages;
-with Ada.Text_IO;
+with Install;
+with Util;
 
 package body Update is
    function CanBeUpdated
@@ -8,24 +11,40 @@ package body Update is
        RemoteVersion : String)
       return Integer
    is
-      Fd       : GNAT.Expect.Process_Descriptor;
-      Timeout  : constant Integer := 1000; --  1 sec
-      Output   : GNAT.Expect.Expect_Match;
-      Result   : Unbounded_String;
+      Fd           : GNAT.Expect.Process_Descriptor;
+      Timeout      : constant Integer := 1000; --  1 sec
+      Output       : GNAT.Expect.Expect_Match;
+      Result       : Unbounded_String;
+      VercmpResult : Integer;
    begin
       GNAT.Expect.Non_Blocking_Spawn
-         (Fd, "/usr/bin/vercmp",
+          (Fd, "/usr/bin/vercmp",
             (1 => new String'(RemoteVersion),
              2 => new String'(LocalVersion)));
       GNAT.Expect.Expect (Fd, Output, "(.)*", Timeout);
       Result := To_Unbounded_String (GNAT.Expect.Expect_Out (Fd));
-      return Integer'Value (To_String (Result));
+      VercmpResult := Integer'Value (To_String (Result));
+      return VercmpResult;
+   exception
+      --  Re-raise but with a bit more helpful message
+      when GNAT.Expect.Invalid_Process =>
+         raise GNAT.Expect.Invalid_Process
+            with "Can not find 'vercmp' executable, "
+               & "is it installed in /usr/bin/vercmp?";
+      when Constraint_Error =>
+         raise Constraint_Error
+            with """/usr/bin/vercmp " & String'(RemoteVersion) & " "
+               & String'(LocalVersion) & """ returned """ & To_String (Result)
+               & """, expected an int > " & Integer'Image (Integer'First)
+               & " & < " & Integer'Image (Integer'Last);
    end CanBeUpdated;
 
-   procedure FilterUpdatable
+   function FilterUpdatable
        (InstalledPackages : AurInterface.PackageMap.Map;
         Reply : AurReplies.AurReply)
+   return AurInterface.PackageMap.Map
    is
+      UpdatablePackages : AurInterface.PackageMap.Map;
    begin
       for i in Reply.getResults.First_Index .. Reply.getResults.Last_Index loop
          declare
@@ -35,23 +54,23 @@ package body Update is
                := Pkg.GetVersion;
             LocalV : constant Unbounded_String
                := InstalledPackages.Element (Pkg.GetName);
-            Updatable : constant Integer
+            Updatable : constant Integer range -1 .. 1
                := CanBeUpdated (To_String (LocalV), To_String (RemoteV));
          begin
-            case Updatable is
-               when 1 => --  Update available :D
-                  Ada.Text_IO.Put (To_String (Pkg.GetName));
-                  Ada.Text_IO.Put (" " & To_String (LocalV));
-                  Ada.Text_IO.Put_Line (" < " & To_String (RemoteV));
-               when 0 => --  Aur version is equal to the installed one
-                  null;
-               when -1 => --  Aur version is older
-                  null;
-               when others =>
-                  null;
-            end case;
+            if Updatable > 0 then
+               --  BAM aur version is newer
+               UpdatablePackages.Insert
+                  (Pkg.GetName, Pkg.GetVersion);
+            elsif Updatable = 0 then
+               --  Package in aur is like local
+               null;
+            elsif Updatable < 0 then
+               --  Package in aur is older than local
+               null;
+            end if;
          end;
       end loop;
+      return UpdatablePackages;
    end FilterUpdatable;
 
    function GetInstalledPackages
@@ -72,21 +91,21 @@ package body Update is
 
       --  Subtract 1 here, because PacmanOutput contains a newline at the end
       Subs := SplitInputByNewline (Slice (PacmanOutput, 1,
-          Ada.Strings.Unbounded.Length (PacmanOutput) - 1));
+         Ada.Strings.Unbounded.Length (PacmanOutput) - 1));
 
       for I in 1 .. GNAT.String_Split.Slice_Count (Subs) loop
          --  Loop though the substrings
          declare
             --  Pull the next substring into an unbounded string for easy use
-            Sub : constant Unbounded_String := To_Unbounded_String
-                  (GNAT.String_Split.Slice (Subs, I));
+            Sub : constant Unbounded_String
+               := To_Unbounded_String (GNAT.String_Split.Slice (Subs, I));
             --  Find the name
             Name : constant Unbounded_String
                := To_Unbounded_String (Slice (Sub, 1, Index (Sub, " ") - 1));
             --  Find the version
             Version : constant Unbounded_String
                := To_Unbounded_String (Slice
-                     (Sub, Index (Sub, " ") + 1, Length (Sub)));
+                  (Sub, Index (Sub, " ") + 1, Length (Sub)));
          begin
             PkgList.Insert
                 (Name, Version);
@@ -94,6 +113,13 @@ package body Update is
       end loop;
 
       return PkgList;
+
+   exception
+      --  Re-raise but with a bit more helpful message
+      when GNAT.Expect.Invalid_Process =>
+         raise GNAT.Expect.Invalid_Process
+            with "Can not find 'pacman' executable, "
+               & "is it installed in /usr/bin/pacman?";
    end GetInstalledPackages;
 
    function SplitInputByNewline (Input : String)
@@ -113,15 +139,32 @@ package body Update is
    procedure Update is
       Reply       : AurReplies.AurReply;
       InstalledPackages : AurInterface.PackageMap.Map;
+      UpdatablePackages : AurInterface.PackageMap.Map;
    begin
-      Ada.Text_IO.Put_Line ("Checking for installed packages");
+      Ada.Text_IO.Put_Line (":: Checking for installed packages");
       InstalledPackages := GetInstalledPackages;
 
-      Ada.Text_IO.Put_Line ("Checking for updates");
+      Ada.Text_IO.Put_Line (":: Checking for updates");
       Reply := AurInterface.multiinfo (InstalledPackages);
+      UpdatablePackages := FilterUpdatable (InstalledPackages, Reply);
 
-      FilterUpdatable (InstalledPackages, Reply);
+      Reply := AurInterface.multiinfo (UpdatablePackages);
 
-      Ada.Text_IO.Put_Line ("Done updating");
+      Ada.Text_IO.Put ("Aur Targets    (" & Reply.getResults.length'img & "): ");
+      for i in Reply.getResults.First_Index ..
+         Reply.getResults.Last_Index loop
+            Ada.Text_IO.Put (To_String (Reply.getResults.Element (i).GetName) & " ");
+      end loop;
+      Ada.Text_IO.New_Line;
+      if Util.UserConfirm (To_Unbounded_String
+         ("Proceed with installation? [Y/n] ")) then
+         --  Iterate over packages and call install method
+         for i in Reply.getResults.First_Index ..
+            Reply.getResults.Last_Index loop
+            Install.InstallPackage (Reply.getResults.Element (i));
+         end loop;
+
+         Ada.Text_IO.Put_Line (":: Done updating");
+      end if;
    end Update;
 end Update;

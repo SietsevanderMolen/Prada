@@ -1,15 +1,15 @@
 with GNAT.String_Split;
 with AurReplies;
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with AurInterface; use AurInterface;
 
 package Update is
    procedure Update;
    --  Updates all aur packages on this system
 private
-   procedure FilterUpdatable
+   function FilterUpdatable
       (InstalledPackages : AurInterface.PackageMap.Map;
-       Reply : AurReplies.AurReply);
+       Reply : AurReplies.AurReply)
+   return AurInterface.PackageMap.Map;
    --  Checks for updates and returns a list of updatable packages
 
    function GetInstalledPackages
