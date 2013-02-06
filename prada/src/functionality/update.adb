@@ -150,12 +150,15 @@ package body Update is
 
       Reply := AurInterface.multiinfo (UpdatablePackages);
 
-      Ada.Text_IO.Put ("Aur Targets    (" & Reply.getResults.length'img & "): ");
+      Ada.Text_IO.Put
+         ("Aur Targets    (" & Reply.getResults.Length'Img & "): ");
       for i in Reply.getResults.First_Index ..
          Reply.getResults.Last_Index loop
-            Ada.Text_IO.Put (To_String (Reply.getResults.Element (i).GetName) & " ");
+            Ada.Text_IO.Put
+               (To_String (Reply.getResults.Element (i).GetName) & " ");
       end loop;
       Ada.Text_IO.New_Line;
+
       if Util.UserConfirm (To_Unbounded_String
          ("Proceed with installation? [Y/n] ")) then
          --  Iterate over packages and call install method
