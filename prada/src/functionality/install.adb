@@ -82,7 +82,7 @@ package body Install is
       --  Remove the directory
       Sys.Remove_Directory (RequestBuildFolder (Pkg));
       --  Make the actual directory again
-      Sys.Create_Directory (RequestBuildFolder (Pkg));
+      Sys.Create_Directory_Recursive (RequestBuildFolder (Pkg));
    end PurgeBuildFolder;
 
    procedure PurgeTempFolder (Pkg : AurPackages.AurPackage)
@@ -91,7 +91,7 @@ package body Install is
       --  Remove the directory
       Sys.Remove_Directory (RequestTempFolder (Pkg));
       --  Make the actual directory again
-      Sys.Create_Directory (RequestTempFolder (Pkg));
+      Sys.Create_Directory_Recursive (RequestTempFolder (Pkg));
    end PurgeTempFolder;
 
    function RequestBuildFolder (Pkg : AurPackages.AurPackage) return String
