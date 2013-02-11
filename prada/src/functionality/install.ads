@@ -28,9 +28,6 @@ private
    procedure PurgeBuildFolder (Pkg : AurPackages.AurPackage);
    --  Purges the temporary folder for this build/installation
 
-   function FindUID return String;
-   --  Finds the user id for the user parenting this process
-
    procedure DownloadPKG (Pkg : AurPackages.AurPackage);
 
    procedure UnzipPKG (Pkg : AurPackages.AurPackage);

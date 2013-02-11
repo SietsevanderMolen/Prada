@@ -1,9 +1,8 @@
 with Ada.Text_IO;
 with AurReplies;
 with Search;
-with GNAT.Expect; use GNAT.Expect;
-with Ada.Environment_Variables;
 with Interfaces.C; use Interfaces.C;
+with Sys;
 with AurInterface;
 
 package body Install is
@@ -29,18 +28,6 @@ package body Install is
       dst := RequestTempFolder (Pkg) & "/" & Pkg.GetName & ".tar.gz";
       AurInterface.DownloadFile (url, dst);
    end DownloadPKG;
-
-   function FindUID return String
-   is
-      Fd      : Process_Descriptor;
-      Timeout : constant Integer := 1000; -- 1 sec
-      Result  : Expect_Match;
-   begin
-      GNAT.Expect.Non_Blocking_Spawn (Fd, "/usr/bin/id", (1 => new String'
-         ("-u")));
-      GNAT.Expect.Expect (Fd, Result, ".*", Timeout);
-      return GNAT.Expect.Expect_Out (Fd);
-   end FindUID;
 
    procedure Install
       (Query : Unbounded_String)
@@ -91,70 +78,39 @@ package body Install is
 
    procedure PurgeBuildFolder (Pkg : AurPackages.AurPackage)
    is
-      function Sys (Arg : char_array) return Integer;
-      pragma Import (C, Sys, "system");
-      Ret_Val : Integer;
-      pragma Unreferenced (Ret_Val);
    begin
-      --  Delete dir to purge it's contents; discard error if it doesn't exist
-      Ret_Val := Sys (To_C ("rm -rf "
-         & RequestBuildFolder (Pkg) & " >/dev/null"));
+      --  Remove the directory
+      Sys.Remove_Directory (RequestBuildFolder (Pkg));
       --  Make the actual directory again
-      Ret_Val := Sys (To_C ("mkdir -p "
-         & RequestBuildFolder (Pkg) & " >/dev/null"));
+      Sys.Create_Directory (RequestBuildFolder (Pkg));
    end PurgeBuildFolder;
 
    procedure PurgeTempFolder (Pkg : AurPackages.AurPackage)
    is
-      function Sys (Arg : char_array) return Integer;
-      pragma Import (C, Sys, "system");
-      Ret_Val : Integer;
-      pragma Unreferenced (Ret_Val);
    begin
-      --  Delete dir to purge it's contents; discard error if it doesn't exist
-      Ret_Val := Sys (To_C ("rm -rf "
-         & RequestTempFolder (Pkg) & " >/dev/null"));
+      --  Remove the directory
+      Sys.Remove_Directory (RequestTempFolder (Pkg));
       --  Make the actual directory again
-      Ret_Val := Sys (To_C ("mkdir -p "
-         & RequestTempFolder (Pkg) & " >/dev/null"));
+      Sys.Create_Directory (RequestTempFolder (Pkg));
    end PurgeTempFolder;
 
    function RequestBuildFolder (Pkg : AurPackages.AurPackage) return String
    is
-      Ret_Val : Integer;
-      TmpDir  : Unbounded_String;
-      pragma Unreferenced (Ret_Val);
+      TmpDir  : Unbounded_String := To_Unbounded_String (Sys.Get_Temp_Dir);
    begin
-      --  Set the temp dir as /tmp if it's not specd in $TMPDIR
-      if Ada.Environment_Variables.Exists (Name => "TMPDIR") then
-         TmpDir := To_Unbounded_String
-            (Ada.Environment_Variables.Value (Name => "TMPDIR"));
-      else
-         TmpDir := To_Unbounded_String ("/tmp");
-      end if;
-
       --  Use the systems TmpDir and uid to create our specific temp folder
-      TmpDir := TmpDir & "/pradabld-" & FindUID
+      TmpDir := TmpDir & "/pradabld-" & Sys.FindUID
                & "/" & To_String (Pkg.GetName);
       return To_String (TmpDir);
    end RequestBuildFolder;
 
    function RequestTempFolder (Pkg : AurPackages.AurPackage) return String
    is
-      Ret_Val : Integer;
-      TmpDir  : Unbounded_String;
-      pragma Unreferenced (Ret_Val);
+      TmpDir  : Unbounded_String := To_Unbounded_String (Sys.Get_Temp_Dir);
    begin
-      --  Set the temp dir as /tmp if it's not specd in $TMPDIR
-      if Ada.Environment_Variables.Exists (Name => "TMPDIR") then
-         TmpDir := To_Unbounded_String
-            (Ada.Environment_Variables.Value (Name => "TMPDIR"));
-      else
-         TmpDir := To_Unbounded_String ("/tmp");
-      end if;
 
       --  Use the systems TmpDir and uid to create our specific temp folder
-      TmpDir := TmpDir & "/pradatmp-" & FindUID
+      TmpDir := TmpDir & "/pradatmp-" & Sys.FindUID
                & "/" & To_String (Pkg.GetName);
       return To_String (TmpDir);
    end RequestTempFolder;
