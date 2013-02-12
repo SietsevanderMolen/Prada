@@ -79,13 +79,15 @@ package body AurInterface is
       return String
    is
       Status : aliased Integer;
-      url :  constant String :=
+      Url    :  constant String :=
          AurURL & "rpc.php?type=" & qtype & To_String (arg);
       Output : constant String :=
          GNAT.Expect.Get_Command_Output
             ("/usr/bin/curl",
-            (1 => new String'("-LfGs"),
-             2 => new String'(url)), "", Status'Access);
+               (1 => new String'("-LfGs"),
+                2 => new String'(Url)
+               ),
+            "", Status'Access);
    begin
       return Output;
 
