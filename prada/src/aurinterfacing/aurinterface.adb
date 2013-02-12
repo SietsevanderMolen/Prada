@@ -84,7 +84,7 @@ package body AurInterface is
       Output : constant String :=
          GNAT.Expect.Get_Command_Output
             ("/usr/bin/curl",
-               (1 => new String'("-LfGs"),
+               (1 => new String'("-LfgGs"),
                 2 => new String'(Url)
                ),
             "", Status'Access);
