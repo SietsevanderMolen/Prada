@@ -1,5 +1,5 @@
 --  with "gnatcoll";
-with "aws";
+--  with "aws";
 with "florist";
 
 project prada is
