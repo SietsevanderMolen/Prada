@@ -1,5 +1,4 @@
 with AurReplyFactory; use AurReplyFactory;
-with Ada.Text_IO; use Ada.Text_IO;
 with GNAT.Expect;
 with Ada; use Ada;
 with Interfaces.C; use Interfaces.C;
@@ -28,17 +27,20 @@ package body AurInterface is
    end GetAurURL;
 
    function info
-      (query : in Unbounded_String) return AurReply
+      (query : in Unbounded_String)
+      return AurReply
    is
-      json : String := PerformAurQuery ("info", "&arg=" & query);
+      json : constant String := PerformAurQuery ("info", "&arg=" & query);
    begin
       return createAurReply (json);
    end info;
 
    function msearch
-      (query : in Unbounded_String) return AurReply
+      (query : in Unbounded_String)
+      return AurReply
    is
-         json : String := PerformAurQuery ("msearch", "&arg=" & query);
+         json : constant String :=
+            PerformAurQuery ("msearch", "&arg=" & query);
    begin
       return createAurReply (json);
    end msearch;
@@ -58,7 +60,7 @@ package body AurInterface is
       end loop;
 
       declare
-         json : String := PerformAurQuery ("multiinfo", AurQuery);
+         json : constant String := PerformAurQuery ("multiinfo", AurQuery);
       begin
          return createAurReply (json);
       end;
@@ -76,14 +78,14 @@ package body AurInterface is
        arg   : in Unbounded_String)
       return String
    is
-      Result       : Unbounded_String;
       Status : aliased Integer;
-      url :  Unbounded_String := AurURL & "rpc.php?type=" &
-                  To_Unbounded_String (qtype) & arg;
-      Output : String := GNAT.Expect.Get_Command_Output
-                           ("/usr/bin/curl",
-                           (1 => new String'("-LfGs"),
-                            2 => new String'(To_String (url))),"", Status'Access);
+      url :  constant String :=
+         AurURL & "rpc.php?type=" & qtype & To_String (arg);
+      Output : constant String :=
+         GNAT.Expect.Get_Command_Output
+            ("/usr/bin/curl",
+            (1 => new String'("-LfGs"),
+             2 => new String'(url)), "", Status'Access);
    begin
       return Output;
 
@@ -99,7 +101,7 @@ package body AurInterface is
    function searchaur
       (query : in Unbounded_String) return AurReply
    is
-      json : String := PerformAurQuery ("search", "&arg=" & query);
+      json : constant String := PerformAurQuery ("search", "&arg=" & query);
    begin
       return createAurReply (json);
    end searchaur;
