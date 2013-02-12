@@ -1,6 +1,6 @@
 with AurReplyFactory; use AurReplyFactory;
-with AWS.Client, AWS.Response, AWS.Messages;
-use  AWS, AWS.Messages;
+with Ada.Text_IO; use Ada.Text_IO;
+with GNAT.Expect;
 with Ada; use Ada;
 with Interfaces.C; use Interfaces.C;
 with Ada.Strings.Unbounded.Hash;
@@ -30,19 +30,17 @@ package body AurInterface is
    function info
       (query : in Unbounded_String) return AurReply
    is
-      json      : Unbounded_String;
+      json : String := PerformAurQuery ("info", "&arg=" & query);
    begin
-      json := PerformAurQuery ("info", "&arg=" & query);
-      return createAurReply (To_String (json));
+      return createAurReply (json);
    end info;
 
    function msearch
       (query : in Unbounded_String) return AurReply
    is
-      json : Unbounded_String;
+         json : String := PerformAurQuery ("msearch", "&arg=" & query);
    begin
-      json := PerformAurQuery ("msearch", "&arg=" & query);
-      return createAurReply (To_String (json));
+      return createAurReply (json);
    end msearch;
 
    function multiinfo
@@ -51,8 +49,6 @@ package body AurInterface is
    is
       use PackageMap;
       curs : Cursor := First (packages);
-
-      json : Unbounded_String;
       AurQuery  : Unbounded_String;
    begin
       while Has_Element (curs) loop
@@ -61,8 +57,11 @@ package body AurInterface is
          Next (curs);
       end loop;
 
-      json := PerformAurQuery ("multiinfo", AurQuery);
-      return createAurReply (To_String (json));
+      declare
+         json : String := PerformAurQuery ("multiinfo", AurQuery);
+      begin
+         return createAurReply (json);
+      end;
    end multiinfo;
 
    function Name_Hashed (id : Unbounded_String)
@@ -75,45 +74,33 @@ package body AurInterface is
    function PerformAurQuery
       (qtype : in String;
        arg   : in Unbounded_String)
-      return Unbounded_String
+      return String
    is
-      Page      : AWS.Response.Data;
-      S         : Messages.Status_Code;
-      Con_Fail  : exception;
-      Mime_Fail : exception;
-      url       : Unbounded_String;
-      str       : Unbounded_String;
+      Result       : Unbounded_String;
+      Status : aliased Integer;
+      url :  Unbounded_String := AurURL & "rpc.php?type=" &
+                  To_Unbounded_String (qtype) & arg;
+      Output : String := GNAT.Expect.Get_Command_Output
+                           ("/usr/bin/curl",
+                           (1 => new String'("-LfGs"),
+                            2 => new String'(To_String (url))),"", Status'Access);
    begin
-      --  Create the search url where we can reach the rpc
-      url  := AurURL & "rpc.php?type=" &
-      To_Unbounded_String (qtype) & arg;
-      Page := Client.Get (To_String (url));
-      S    := AWS.Response.Status_Code (Page);
+      return Output;
 
-      --  First check for connection/general errors
-      if S not in Success then
-         raise Con_Fail with
-            "Unable to retrieve data => Status Code: "
-            & Image (S) & " Reason: " & Reason_Phrase (S);
-      --  I wonder if this is seriously necessary, but I'll add it anyway
-      elsif AWS.Response.Content_Type (Page) /= "application/json" then
-         raise Mime_Fail with
-         "Wrong mimetype. Found " &
-         AWS.Response.Content_Type (Page) &
-         " but expected application/json.";
-      end if;
-
-      --  Get actual json message
-      str := AWS.Response.Message_Body (Page);
-      return str;
+      --  --  First check for connection/general errors
+      --  if S not in AWS.Messages.Success then
+         --  raise Con_Fail with
+            --  "Unable to retrieve data => Status Code: "
+            --  & Image (S) & " Reason: " & Reason_Phrase (S);
+      --  --  I wonder if this is seriously necessary, but I'll add it anyway
+      --  end if;
    end PerformAurQuery;
 
    function searchaur
       (query : in Unbounded_String) return AurReply
    is
-      json    : Unbounded_String;
+      json : String := PerformAurQuery ("search", "&arg=" & query);
    begin
-      json := PerformAurQuery ("search", "&arg=" & query);
-      return createAurReply (To_String (json));
+      return createAurReply (json);
    end searchaur;
 end AurInterface;

@@ -32,5 +32,5 @@ private
    function PerformAurQuery
        (qtype : in String;
         arg : in Unbounded_String)
-       return Unbounded_String;
+       return String;
 end AurInterface;
