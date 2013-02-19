@@ -2,6 +2,9 @@ all:
 	gprbuild -p -f -P./prada/prada
 	gprbuild -p -f -P./harness/harness
 
+install:
+	install -Dm755 exe/prada ${DESTDIR}/usr/bin/prada
+
 test:
 	gprbuild -p -f -P./harness/harness
 
