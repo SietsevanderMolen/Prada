@@ -37,32 +37,34 @@ package body Install is
    begin
       results := Search.Search (Query);
 
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put_Line
-         ("Type number to install. Separate each number with a space.");
-      Ada.Text_IO.Put ("Numbers: ");
+      if AurReplies.getResultCount (results) > 0 then
 
-      --  Split the string by spaces so we keep the numbers
-      Subs := SplitInput (To_Unbounded_String
-         (Ada.Text_IO.Get_Line));
-      Ada.Text_IO.New_Line;
+         Ada.Text_IO.New_Line;
+         Ada.Text_IO.Put_Line
+             ("Type number to install. Separate each number with a space.");
+         Ada.Text_IO.Put ("Numbers: ");
 
-      for I in 1 .. GNAT.String_Split.Slice_Count (Subs) loop
-         --  Loop though the substrings
-         declare
-            Sub : constant String := GNAT.String_Split.Slice (Subs, I);
-            --  Pull the next substring out into a string for easy handling.
-         begin
-            for i in results.getResults.First_Index ..
-               results.getResults.Last_Index loop
-               --  If this is a number we want to install, go for it
-               if AurPackages.GetRefNum (results.getResults.Element (i))
-                  = Integer'Value (Sub) then
-                  InstallPackage (results.getResults.Element (i));
-               end if;
-            end loop;
-         end;
-      end loop;
+         --  Split the string by spaces so we keep the numbers
+         Subs := SplitInput (To_Unbounded_String
+             (Ada.Text_IO.Get_Line));
+         Ada.Text_IO.New_Line;
+         for I in 1 .. GNAT.String_Split.Slice_Count (Subs) loop
+            --  Loop though the substrings
+            declare
+               Sub : constant String := GNAT.String_Split.Slice (Subs, I);
+               --  Pull the next substring out into a string for easy handling.
+            begin
+               for i in results.getResults.First_Index ..
+                  results.getResults.Last_Index loop
+                  --  If this is a number we want to install, go for it
+                  if AurPackages.GetRefNum (results.getResults.Element (i))
+                     = Integer'Value (Sub) then
+                     InstallPackage (results.getResults.Element (i));
+                  end if;
+               end loop;
+            end;
+         end loop;
+      end if;
    end Install;
 
    procedure InstallPackage
