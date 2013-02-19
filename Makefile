@@ -1,18 +1,18 @@
 all:
-	gprbuild -p -f -Pprada/prada
-	gprbuild -p -f -Pharness/harness
+	gprbuild -p -f -P./prada/prada
+	gprbuild -p -f -P./harness/harness
 
 test:
-	gprbuild -p -f -Pharness/harness
+	gprbuild -p -f -P./harness/harness
 
 coverage:
-	gprbuild -p -f -Pharness/harness -XCOVERAGE=yes
+	gprbuild -p -f -P./harness/harness -XCOVERAGE=yes
 	exe/test_prada
 	cd harness/obj; gcov ../../prada/obj/*.gcda
 
 clean:
-	gprclean -Pharness/harness
-	gprclean -Pprada/prada
-	-rm -rf harness/obj
-	-rm -rf prada/obj
-	-rm -rf prada/lib
+	gprclean -P./harness/harness
+	gprclean -P./prada/prada
+	-rm -rf ./harness/obj
+	-rm -rf ./prada/obj
+	-rm -rf ./prada/lib
