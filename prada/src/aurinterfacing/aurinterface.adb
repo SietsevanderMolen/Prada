@@ -1,15 +1,15 @@
 with AurReplyFactory; use AurReplyFactory;
-with GNAT.Expect;
 with Ada; use Ada;
 with Interfaces.C; use Interfaces.C;
 with Ada.Strings.Unbounded.Hash;
+with Curl;
 
 package body AurInterface is
-   AurURL : constant String := "https://aur.archlinux.org/";
+   AurURL : constant String := "https://aur.archlinux.org";
 
    procedure DownloadFile
       (Url  : Unbounded_String;
-      Dest : Unbounded_String
+       Dest : Unbounded_String
       )
    is
       function Sys (Arg : char_array) return Integer;
@@ -78,26 +78,10 @@ package body AurInterface is
        arg   : in Unbounded_String)
       return String
    is
-      Status : aliased Integer;
       Url    :  constant String :=
-         AurURL & "rpc.php?type=" & qtype & To_String (arg);
-      Output : constant String :=
-         GNAT.Expect.Get_Command_Output
-            ("/usr/bin/curl",
-               (1 => new String'("-LfgGs"),
-                2 => new String'(Url)
-               ),
-            "", Status'Access);
+         AurURL & "/rpc.php?type=" & qtype & To_String (arg);
    begin
-      return Output;
-
-      --  --  First check for connection/general errors
-      --  if S not in AWS.Messages.Success then
-         --  raise Con_Fail with
-            --  "Unable to retrieve data => Status Code: "
-            --  & Image (S) & " Reason: " & Reason_Phrase (S);
-      --  --  I wonder if this is seriously necessary, but I'll add it anyway
-      --  end if;
+      return Curl.DoHTTPRequest (Url);
    end PerformAurQuery;
 
    function searchaur
