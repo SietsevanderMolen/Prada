@@ -30,10 +30,10 @@ package body Update is
                UpdatablePackages.Insert
                   (Pkg.GetName, Pkg.GetVersion);
             elsif Updatable = 0 then
-               --  Package in aur is like local
+               --  Package in repository is like local
                null;
             elsif Updatable < 0 then
-               --  Package in aur is older than local
+               --  Package in repository is older than local
                null;
             end if;
          end;

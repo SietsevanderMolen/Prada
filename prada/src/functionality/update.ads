@@ -9,5 +9,5 @@ private
       (InstalledPackages : AurInterface.PackageMap.Map;
        Reply : AurReplies.AurReply)
    return AurInterface.PackageMap.Map;
-   --  Checks for updates and returns a list of updatable packages
+   --  Checks for updates and returns a list of packages with updates
 end Update;
