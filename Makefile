@@ -1,4 +1,6 @@
-all: prada pradainstall test
+.PHONY: prada pradainstall test coverage clean
+
+all: prada pradainstall coverage
 
 prada:
 	gprbuild -p -f -P./prada/prada
