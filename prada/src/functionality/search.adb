@@ -11,23 +11,23 @@ package body Search is
       --  are usually shown anyway
       Ada.Integer_Text_IO.Put (Pkg.GetRefNum, Width => 2);
       Ada.Text_IO.Put (
-      --  A space to separate the refnum and name
+         --  A space to separate the refnum and name
          " " &
-      --  Change to blue colour
+         --  Change to blue colour
          Ada.Characters.Latin_1.ESC & "[34;1m" &
-      --  Print aur identifier
+         --  Print aur identifier
          "aur/" &
-      --  Disable blue color
+         --  Disable blue color
          Ada.Characters.Latin_1.ESC & "[0;1m" &
-      --  Print name
+         --  Print name
          Ada.Strings.Unbounded.To_String (Pkg.GetName) &
-      --  A space to separate the name and version
+         --  A space to separate the name and version
          " " &
-      --  Change to gray colour
+         --  Change to gray colour
          Ada.Characters.Latin_1.ESC & "[30;1m" &
-      --  Print version
+         --  Print version
          Ada.Strings.Unbounded.To_String (Pkg.GetVersion) &
-      --  Reset colour
+         --  Reset colour
          Ada.Characters.Latin_1.ESC & "[0m"
       );
       --  Only print if package is out of date
