@@ -18,7 +18,8 @@ test:
 coverage:
 	gprbuild -p -f -P./harness/harness -XCOVERAGE=yes
 	exe/test_prada
-	cd harness/obj; gcov ../../prada/obj/*.gcda
+	cd harness/obj; gcov ../../prada/obj/pradainstall.gcda
+	cd harness/obj; gcov ../../prada/obj/prada.gcda
 
 clean:
 	gprclean -P./harness/harness
@@ -27,3 +28,5 @@ clean:
 	-rm -rf ./harness/obj
 	-rm -rf ./prada/obj
 	-rm -rf ./prada/lib
+	-rm -rf **/*.ali
+	-rm -rf **/*.o
