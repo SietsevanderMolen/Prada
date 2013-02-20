@@ -1,19 +1,19 @@
 with Ada.Text_IO;
+with GNAT.OS_Lib;
 
 procedure Prada
 is
    package ATIO renames Ada.Text_IO;
 
-   function SayHi
-      return String;
+   procedure ShowHelp;
 
-   function SayHi
-      return String
+   procedure ShowHelp
    is
    begin
-      return "This does nothing.";
-   end SayHi;
+      ATIO.Put_Line ("Prada: No functions currently implemented");
+   end ShowHelp;
 
 begin
-   ATIO.Put_Line (SayHi);
+   ShowHelp;
+   GNAT.OS_Lib.OS_Exit (0);
 end Prada;
