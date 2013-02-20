@@ -1,21 +1,17 @@
-.PHONY: prada pradainstall test coverage clean
-
-all: prada pradainstall coverage
+.PHONY: prada install test coverage clean
 
 prada:
 	gprbuild -p -f -P./prada/prada
-
-pradainstall:
 	gprbuild -p -f -P./prada/pradainstall
 
 install:
 	install -Dm755 exe/prada ${DESTDIR}/usr/bin/prada
 	install -Dm755 exe/pradainstall ${DESTDIR}/usr/bin/pradainstall
 
-test:
+test: prada
 	gprbuild -p -f -P./harness/harness
 
-coverage:
+coverage: prada
 	gprbuild -p -f -P./harness/harness -XCOVERAGE=yes
 	exe/test_prada
 	cd harness/obj; gcov ../../prada/obj/pradainstall.gcda
@@ -25,8 +21,3 @@ clean:
 	gprclean -P./harness/harness
 	gprclean -P./prada/prada
 	gprclean -P./prada/pradainstall
-	-rm -rf ./harness/obj
-	-rm -rf ./prada/obj
-	-rm -rf ./prada/lib
-	-rm -rf **/*.ali
-	-rm -rf **/*.o
