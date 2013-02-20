@@ -1,9 +1,14 @@
-all:
+all: prada pradainstall test
+
+prada:
 	gprbuild -p -f -P./prada/prada
-	gprbuild -p -f -P./harness/harness
+
+pradainstall:
+	gprbuild -p -f -P./prada/pradainstall
 
 install:
 	install -Dm755 exe/prada ${DESTDIR}/usr/bin/prada
+	install -Dm755 exe/pradainstall ${DESTDIR}/usr/bin/pradainstall
 
 test:
 	gprbuild -p -f -P./harness/harness
@@ -16,6 +21,7 @@ coverage:
 clean:
 	gprclean -P./harness/harness
 	gprclean -P./prada/prada
+	gprclean -P./prada/pradainstall
 	-rm -rf ./harness/obj
 	-rm -rf ./prada/obj
 	-rm -rf ./prada/lib
