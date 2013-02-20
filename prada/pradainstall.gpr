@@ -17,7 +17,7 @@ project pradainstall is
       use ("-gnatwa",
            "-gnaty3abcdefhiklmnoprstux",
            "-Wall",
-           "-O2",
+           "-O0",
            "-lssl",
            "-lcrypto",
            "-gnat05");
