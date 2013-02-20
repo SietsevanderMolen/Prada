@@ -1,5 +1,6 @@
 with "aunit";
 with "../prada/prada";
+with "../prada/pradainstall";
 
 project Harness is
 
