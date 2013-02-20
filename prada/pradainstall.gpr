@@ -1,6 +1,4 @@
---  with "gnatcoll";
---  with "aws";
-with "florist";
+--  with "florist";
 
 project pradainstall is
 
