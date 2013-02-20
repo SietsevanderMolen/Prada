@@ -3,7 +3,7 @@
 project prada is
 
    type Yes_No is ("yes", "no");
-   Coverage : Yes_No := External ("COVERAGE", "no");
+   Coverage : Yes_No := External ("COVERAGE", "yes");
 
    for Main use ("prada.adb");
 
@@ -17,17 +17,26 @@ project prada is
       use ("-gnatwa",
            "-gnaty3abcdefhiklmnoprstux",
            "-Wall",
-           "-O2",
+           "-O0",
            "-lssl",
            "-lcrypto",
            "-gnat05");
 
       case Coverage is
          when "yes" =>
-            for Default_Switches ("ada") use Compiler'Default_Switches ("ada") &
+            for Default_Switches ("Ada") use Compiler'Default_Switches ("Ada") &
                ("-fprofile-arcs", "-ftest-coverage");
          when others =>
       end case;
    end Compiler;
+
+   package Linker is
+      case Coverage is
+         when "yes" =>
+            for Default_Switches ("Ada") use Linker'Default_Switches ("Ada") &
+               ("-fprofile-arcs");
+         when others =>
+      end case;
+   end Linker;
 
 end prada;
