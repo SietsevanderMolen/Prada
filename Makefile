@@ -1,14 +1,15 @@
 .PHONY: prada install test coverage clean
 
 prada:
-	gprbuild -p -f -P./prada/prada
-	gprbuild -p -f -P./prada/pradainstall
-	gprbuild -p -f -P./prada/pradaupdate
+	gprbuild -p -P./prada/prada
+	gprbuild -p -P./prada/pradainstall
+	gprbuild -p -P./prada/pradaupdate
 
 install:
 	install -Dm755 exe/prada ${DESTDIR}/usr/bin/prada
 	install -Dm755 exe/pradainstall ${DESTDIR}/usr/bin/pradainstall
 	install -Dm755 exe/pradaupdate ${DESTDIR}/usr/bin/pradaupdate
+
 
 test: prada
 	gprbuild -p -f -P./harness/harness
@@ -24,4 +25,3 @@ clean:
 	gprclean -P./harness/harness
 	gprclean -P./prada/prada
 	gprclean -P./prada/pradainstall
-	gprclean -P./prada/pradaupdate
