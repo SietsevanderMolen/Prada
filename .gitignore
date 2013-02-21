@@ -1,5 +1,6 @@
 # Do not track build objects.
 */obj*/*
+*/lib*/*
 
 # Do not track executables
 exe/*

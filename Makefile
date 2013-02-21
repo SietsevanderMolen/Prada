@@ -1,15 +1,17 @@
-.PHONY: prada install test coverage clean
+.PHONY: libaurinterface install test coverage clean
 
-prada:
+prada: libaurinterface
 	gprbuild -p -P./prada/prada
 	gprbuild -p -P./prada/pradainstall
 	gprbuild -p -P./prada/pradaupdate
+
+libaurinterface:
+	gprbuild -p -P./prada/libaurinterface
 
 install:
 	install -Dm755 exe/prada ${DESTDIR}/usr/bin/prada
 	install -Dm755 exe/pradainstall ${DESTDIR}/usr/bin/pradainstall
 	install -Dm755 exe/pradaupdate ${DESTDIR}/usr/bin/pradaupdate
-
 
 test: prada
 	gprbuild -p -f -P./harness/harness
