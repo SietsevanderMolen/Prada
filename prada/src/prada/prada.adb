@@ -13,6 +13,7 @@ procedure Prada is
    InstallPackage : aliased Boolean := False;
    UpdateSystem   : aliased Boolean := False;
 
+   --  Parse the commandline
    procedure ParseCommandLine
    is
    begin
@@ -31,6 +32,7 @@ procedure Prada is
          GNAT.OS_Lib.OS_Exit (0);
    end ParseCommandLine;
 
+   --  Call pradainstall and pass the right arguments
    procedure RunPradaInstall
    is
       Arguments : POSIX.POSIX_String_List;
@@ -38,13 +40,22 @@ procedure Prada is
       POSIX.Append (Arguments, POSIX.To_POSIX_String (GCL.Get_Argument));
       PUPP.Exec_Search ("./exe/pradainstall", Arguments);
    end RunPradaInstall;
+
+   --  Call pradaupdate and pass the right arguments
+   procedure RunPradaUpdate
+   is
+      Arguments : POSIX.POSIX_String_List;
+   begin
+      POSIX.Append (Arguments, POSIX.To_POSIX_String (GCL.Get_Argument));
+      PUPP.Exec_Search ("./exe/pradaupdate", Arguments);
+   end RunPradaUpdate;
 begin
    ParseCommandLine;
 
    if InstallPackage then
       RunPradaInstall;
    elsif UpdateSystem then
-      null; -- Update called
+      RunPradaUpdate;
    end if;
 
    GNAT.OS_Lib.OS_Exit (0);
