@@ -1,6 +1,5 @@
 with GNAT.OS_Lib;
 with GNAT.Command_Line;
-with Ada.Text_IO; use Ada.Text_IO;
 with POSIX.Unsafe_Process_Primitives;
 
 procedure Prada is
@@ -45,7 +44,7 @@ begin
    if InstallPackage then
       RunPradaInstall;
    elsif UpdateSystem then
-      Put_Line ("Update called");
+      null; -- Update called
    end if;
 
    GNAT.OS_Lib.OS_Exit (0);
