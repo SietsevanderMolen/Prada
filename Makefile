@@ -27,3 +27,4 @@ clean:
 	gprclean -P./harness/harness
 	gprclean -P./prada/prada
 	gprclean -P./prada/pradainstall
+	gprclean -P./prada/libaurinterface
