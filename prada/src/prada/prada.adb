@@ -7,6 +7,7 @@ procedure Prada is
    package PUPP renames POSIX.Unsafe_Process_Primitives;
    procedure ParseCommandLine;
    procedure RunPradaInstall;
+   procedure RunPradaUpdate;
 
    Config : GCL.Command_Line_Configuration;
 
