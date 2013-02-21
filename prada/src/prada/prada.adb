@@ -1,48 +1,52 @@
 with GNAT.OS_Lib;
-with Ada.Text_IO;
 with GNAT.Command_Line;
+with Ada.Text_IO; use Ada.Text_IO;
+with POSIX.Unsafe_Process_Primitives;
 
 procedure Prada is
-   package ATIO renames Ada.Text_IO;
    package GCL renames GNAT.Command_Line;
-
+   package PUPP renames POSIX.Unsafe_Process_Primitives;
    procedure ParseCommandLine;
-   procedure ShowHelp;
+   procedure RunPradaInstall;
+
+   Config : GCL.Command_Line_Configuration;
+
+   InstallPackage : aliased Boolean := False;
+   UpdateSystem   : aliased Boolean := False;
 
    procedure ParseCommandLine
    is
-      No_Parameter : exception;
    begin
-      loop
-         case GCL.Getopt ("h S?") is
-            when 'h' => ShowHelp;
-            when 'S' =>
-               if GNAT.Command_Line.Parameter = "" then
-                  ATIO.Put_Line ("S given");
-               else
-                  raise GCL.Invalid_Parameter;
-               end if;
-            when others => exit;
-         end case;
-      end loop;
+      GCL.Define_Switch (
+         Config, InstallPackage'Access,
+         "-S", Help => "Install a package");
+      GCL.Define_Switch (
+         Config, UpdateSystem'Access,
+         "-Su", Help => "Update system");
+
+      GCL.Getopt (Config);
    exception
       when GCL.Invalid_Switch =>
-         ATIO.Put_Line ("Prada: Switch '" & GCL.Full_Switch & "' not allowed");
-         ShowHelp;
-      when GCL.Invalid_Parameter =>
-         if GCL.Parameter = "" then
-            ATIO.Put_Line ("Prada: '" & GCL.Full_Switch & "' needs a parameter");
-         else
-            ATIO.Put_Line ("Prada: '" & GCL.Parameter & "' is an invalid parameter for switch '" & GCL.Full_Switch  & "'");
-         end if;
-         ShowHelp;
+         GNAT.OS_Lib.OS_Exit (1);
+      when GCL.Exit_From_Command_Line =>
+         GNAT.OS_Lib.OS_Exit (0);
    end ParseCommandLine;
 
-   procedure ShowHelp is
+   procedure RunPradaInstall
+   is
+      Arguments : POSIX.POSIX_String_List;
    begin
-      ATIO.Put_Line ("Prada: No functions currently implemented");
-   end ShowHelp;
+      POSIX.Append (Arguments, POSIX.To_POSIX_String (GCL.Get_Argument));
+      PUPP.Exec_Search ("./exe/pradainstall", Arguments);
+   end RunPradaInstall;
 begin
    ParseCommandLine;
+
+   if InstallPackage then
+      RunPradaInstall;
+   elsif UpdateSystem then
+      Put_Line ("Update called");
+   end if;
+
    GNAT.OS_Lib.OS_Exit (0);
 end Prada;
