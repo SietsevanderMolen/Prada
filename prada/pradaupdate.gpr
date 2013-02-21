@@ -19,8 +19,6 @@ project pradaupdate is
            "-gnaty3abcdefhiklmnoprstux",
            "-Wall",
            "-O0",
-           "-lssl",
-           "-lcrypto",
            "-gnat05");
 
       case Coverage is

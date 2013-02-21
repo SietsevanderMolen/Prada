@@ -1,4 +1,5 @@
 with "florist";
+with "libaurinterface";
 
 project pradainstall is
 
@@ -18,8 +19,6 @@ project pradainstall is
            "-gnaty3abcdefhiklmnoprstux",
            "-Wall",
            "-O0",
-           "-lssl",
-           "-lcrypto",
            "-gnat05");
 
       case Coverage is
