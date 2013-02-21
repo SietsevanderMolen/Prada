@@ -7,7 +7,9 @@ project prada is
 
    for Main use ("prada.adb");
 
-   for Source_Dirs use ("src/prada/**");
+   for Source_Dirs use (
+      "src/prada/**",
+      "src/pradasharedconfig/**");
 
    for Object_Dir use "obj";
    for Exec_Dir use "../exe";
